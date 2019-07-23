@@ -54,5 +54,3 @@ while(the_integer < 0x10FFF){ // 0x10FFF is max representable unicode
 
 }
 console.log("ENDED")
-
-0xa0 or 0xa1
