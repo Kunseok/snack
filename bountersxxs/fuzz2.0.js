@@ -3,9 +3,13 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// credits to liveoverflow for the idea of fuzzing**************************
+// CREDITS TO LIVEOVERFLOW FOR THE IDEA OF FUZZING**************************
 // trys every unicode input in a payload
-// on successful XSS, alert box will pause function
+// paste this into the console
+// on successful XSS, alert box will pause execution
+// console will have the unicode-8 solution, need to convert to unicode
+//    16 to get actual solution. Ex: console says 0xa0, but actual payload
+//    must be with 0xc2%a0 (???????)
 //
 // improvements:
 //    -make payload array of chars, so insertion
