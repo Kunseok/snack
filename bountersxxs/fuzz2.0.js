@@ -12,8 +12,8 @@ function sleep(ms) {
 //    must be with 0xc2%a0 (???????)
 //
 // improvements:
-//    -make payload array of chars, so insertion
-//      point isnt manual
+//    -make payload linked list of chars, so insertion
+//      point isnt manual.
 //    -detect alert box and click through
 //    -only log in successful xss to console
 //    -i found %c2%a0 works, but console log showed %a0. console is logging
