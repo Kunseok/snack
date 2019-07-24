@@ -1,0 +1,4 @@
+ssh -L 5601:localhost:5601: security@10.10.10.115
+
+#tunneling... local listens... i had to use the same port
+#https://www.cyberark.com/threat-research-blog/execute-this-i-know-you-have-it/
