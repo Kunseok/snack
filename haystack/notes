@@ -34,3 +34,35 @@ http://localhost:1234/api/console/api_server?sense_version=%40%40SENSE_VERSION&a
 #
 # check etc/logstash for config.d files
 # /usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
+
+input {
+        file {
+                path => "/opt/kibana/logstash_*" << DO I GO IN HERE AND CREATE THIS FILE?
+                start_position => "beginning"
+                sincedb_path => "/dev/null"
+                stat_interval => "10 second"
+                type => "execute"
+                mode => "read"
+        }
+}
+
+output {
+        if [type] == "execute" {
+                stdout { codec => json }
+                exec {
+                        command => "%{comando} &"
+                }
+        }
+}
+
+filter {
+        if [type] == "execute" {
+                grok {
+                        match => { "message" => "Ejecutar\s*comando\s*:\s+%{GREEDYDATA:comando}" }
+                }
+        }
+}
+
+
+#starts kibana
+/usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
