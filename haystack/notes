@@ -79,7 +79,10 @@ logstash_*: /opt/kibana/
 *.conf    : /etc/logstash/conf.d
 logs      : /var/log/logstash
 
-cp input.conf a.conf; rm input.conf; mv a.conf input.conf
+cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
 cp /tmp/.template /opt/kibana/logstash_kun; cat /opt/kibana/logstash_kun; ls /opt/kibana
 
-how to make the file run? i think it detects changes...
+/root/root.txt 
+Ejecutar comando : cat /root/root.txt >> /tmp/.temp.txt; rm test.txt
+Ejecutar comando : rm /tmp/.temp.txt
+Ejecutar comando : rm test.txt
