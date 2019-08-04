@@ -47,3 +47,11 @@ function: block
 p1:       type=Adminhtml/report_search_grid 
 p2:       output=getCsvFile
 
+
+... confusing aftewards... somehow sqli into db with an admin and we inject
+    a plugin so to reverse shell
+
+
+# sudo -l tells you we can use vi on a directory. in vim you can then:
+    ':!cat /root/root.txt'
+
