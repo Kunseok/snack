@@ -23,3 +23,6 @@ Starting Nmap 7.70 ( https://nmap.org ) at 2019-08-04 14:35 CDT
 CMS Made Simple detected with Wappylzer
 
 https://www.netsparker.com/blog/web-security/type-juggling-authentication-bypass-cms-made-simple/
+
+USER:
+https://dl.packetstormsecurity.net/1904-exploits/cmsmadesimple22-sql.txt
