@@ -26,3 +26,52 @@ https://www.netsparker.com/blog/web-security/type-juggling-authentication-bypass
 
 USER:
 https://dl.packetstormsecurity.net/1904-exploits/cmsmadesimple22-sql.txt
+
+jkr:raykayjay9
+
+at ssh login, root does:
+junk...:########################################################################
+  | sshd: [accepted]
+  | sshd: [accepted]  
+  | /usr/sbin/cron  <------ /var/run/cron.pid permission denied
+  | sshd: jkr [priv]  
+
+message of the day is exploitable?##############################################
+  | sh -c /usr/bin/env -i PATH=
+    /usr/local/sbin <------------------- I can write stuff here... but
+                                          get memory issue? YES!!!!!
+                                          run-parts to do the dev/tcp/ip/port
+                                          trick
+    /usr/local/bin <- X
+    /usr/sbin <- X
+    /usr/bin <- X
+    /sbin <- X cant make ln here
+    /bin <--- i only was able to see run parts here
+     run-parts --lsbsysinit /etc/update-motd.d > /run/motd.dynamic.new 
+RUNNING SH -C /BIN/RUN-PARTS --lsbsysinit /etc/update-motd.d > /run/motd.dynamic.new 
+                                            ^ i cant change this  ^nor this
+                                              i cant make files    same here
+  | /usr/sbin/CRON 
+  | run-parts --lsbsysinit /etc/update-motd.d 
+                    
+  | /bin/sh -c /root/bin/cleanup.pl >/dev/null 2>&1 
+  | /bin/sh /etc/update-motd.d/10-uname 
+  | sshd: jkr [priv]  
+this is a rabbit hole...................
+
+this is exploitable?############################################################
+  | /usr/sbin/CRON 
+  | /usr/sbin/CRON 
+  | /bin/sh -c /root/bin/cleanup.pl >/dev/null 2>&1 
+  | /usr/bin/python3 /usr/bin/fail2ban-server -s /var/run/fail2ban/fail2ban.sock -p /var/run/fail2ban/fail2ban.pid -b 
+            ^ only root can mess with fail2bain stuffs
+
+  | grep -q f2b-apache-404[ \t] 
+  | /bin/sh -c iptables -w -n -L INPUT | grep -q 'f2b-apache-404[ \t]' 
+  | /usr/bin/python3 /usr/bin/fail2ban-server -s /var/run/fail2ban/fail2ban.sock -p /var/run/fail2ban/fail2ban.pid -b 
+  | iptables -w -D f2b-apache-404 -s 10.10.14.73 -j REJECT --reject-with icmp-port-unreachable 
+
+create soft link to run a file i can write to... /home/jkr/.h
+ln -s tofile fromfile
+ln -s TARGETfilename PATH_where_new_file_is_created
+
