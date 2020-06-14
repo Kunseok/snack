@@ -152,7 +152,6 @@ Table: users
 | NoLogin      | portal-user     |
 | NoLongerUsed | openemr_admin   |
 +--------------+-----------------+
-
 [22:42:22] [INFO] table 'openemr.users' dumped to CSV file '/home/kali/.sqlmap/output/hms.htb/dump/openemr/users.csv'
 [22:42:22] [INFO] fetched data logged to text files under '/home/kali/.sqlmap/output/hms.htb'
 [22:42:22] [WARNING] you haven't updated sqlmap for more than 157 days!!!
@@ -182,3 +181,8 @@ chroot changes the apparent root directory for the current so chroot /DIR/THAT/I
 
 so mount local home onto docker /mnt and make /mnt the new root on the docker image
 --rm -it are just for cleanup
+
+sysinfo runs as super user
+sysinfo calls lshw
+you can write a malcious lshw
+you can modify your path so that the malicious lshw is used
