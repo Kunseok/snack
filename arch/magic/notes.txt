@@ -26,3 +26,8 @@ find / -user root -perm -4000 -exec ls -ldb {} \
 ls -la /etc/cron.
 
 local id_rsa.pub > remote authroized_key file
+
+sysinfo uses lshw
+sysinfo sticky bit
+change path to make local lshw with malicous payload
+
