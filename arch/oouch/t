@@ -1,0 +1,2 @@
+curl -X POST 'http://authorization.oouch.htb:8000/oauth/token/' -H "Content-Type: application/x-www-form-urlencoded" --data "grant_type=client_credentials&client_id=7ZLCaJIn9NzEQ081RCpkk6rLwc7aJmYZGDmfvhsn&client_secret=n6Mm4ziQ6FIw8ruegyY2b2KRDqgZ1t839PJxZZWvRU0ucgzrZQDiEQmscd8fD4ncW2sU6udtxz0ifIbdmCuJdFhyy9gxrcszPErN5SADC8kObUlDgkhTJG3N5G6o5CSL" -L -s
+
