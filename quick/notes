@@ -1,0 +1,29 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-05 09:12 EDT
+Nmap scan report for quick.htb (10.10.10.186)
+Host is up (0.070s latency).
+Not shown: 65533 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+9001/tcp open  tor-orport
+
+Nmap done: 1 IP address (1 host up) scanned in 30.12 seconds
+
+Tried:
+--------------------------------------------------------------------------------
+subdomains:
+  portal.quick.htb
+  chat.quick.htb
+  support.quick.htb
+  clients.quick.htb
+  mobilequick.htb
+
+ffuf:
+  login.php               [Status: 200, Size: 4345, Words: 451, Lines: 209]
+  index.php               [Status: 200, Size: 3351, Words: 354, Lines: 126]
+  home.php                [Status: 200, Size: 86, Words: 2, Lines: 1]
+  search.php              [Status: 200, Size: 1, Words: 1, Lines: 2]
+  db.php                  [Status: 200, Size: 0, Words: 1, Lines: 1]
+found server-status on portal.quick.htb:9001
+
+curl https://portal.quick.htb:9001/server-status --http3 -v
+nmap -sU quick.htb
