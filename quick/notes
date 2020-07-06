@@ -27,3 +27,11 @@ found server-status on portal.quick.htb:9001
 
 curl https://portal.quick.htb:9001/server-status --http3 -v
 nmap -sU quick.htb
+
+https://hub.docker.com/r/ymuski/curl-http
+need to route this traffic through my vpn
+use other container
+docker pull dperson/openvpn-client
+
+docker run -it --rm ymuski/curl-http3 curl -ILv https://yurets.pro --http3
+docker run -it --net=container:vpn -d ymuski/curl-http3 curl -ILv https://yurets.pro --http3
