@@ -1,1 +1,0 @@
-curl https://portal.quick.htb -CURL_HTTP_VERSION_3 -v

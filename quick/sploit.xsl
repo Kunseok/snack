@@ -10,6 +10,8 @@
     <xsl:variable name="process" select="rt:exec($rtObj, $cmd)"/>
     Process: <xsl:value-of select="$process"/>
     Command: <xsl:value-of select="$cmd"/>
+    Version: <xsl:value-of select="system-property('xsl:version')"/>
+    Vendor:  <xsl:value-of select="system-property('xsl:vendor')"/>
   </root>
 </xsl:template>
 </xsl:stylesheet>
