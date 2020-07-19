@@ -1,3 +1,4 @@
+# app.py
 from flask import Flask, request, render_template, g, redirect, url_for,\
     make_response
 from utils import get_db, get_session, get_user, try_login, query_db, badword_in_str

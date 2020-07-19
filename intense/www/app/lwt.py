@@ -1,3 +1,4 @@
+# lwt.py
 from hashlib import sha256
 from base64 import b64decode, b64encode
 from random import randrange
@@ -20,6 +21,9 @@ def verif_signature(data, sig):
     return sign(data) == sig
 
 
+######################################################################
+#   catch
+######################################################################
 def parse_session(cookie):
     """ Parse cookie and return dict
         @cookie: "key1=value1;key2=value2"

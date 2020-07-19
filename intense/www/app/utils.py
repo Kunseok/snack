@@ -1,4 +1,4 @@
-import lwt
+# utils.py
 import sqlite3
 from hashlib import sha256
 from flask import g
@@ -82,10 +82,12 @@ def get_session(request):
     if "auth" not in request.cookies:
         return
     cookie = request.cookies.get("auth")
+
     try:
         info = lwt.parse_session(cookie)
     except lwt.InvalidSignature:
         return {"status": -1, "msg": "Invalid signature"}
+
     return info
 
 

