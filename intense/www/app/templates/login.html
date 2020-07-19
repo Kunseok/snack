@@ -1,0 +1,39 @@
+{% include 'header.html' %}
+
+<section id="contact" name="contact">
+    <div id="footerwrap">
+      <div class="container">
+        <div class="col-lg-7">
+          <h3>Login</h3>
+
+          <br>
+          <form class="contact-form php-mail-form" role="form" action="/postlogin" method="POST">
+            {% if msg %}
+                {{ msg }}
+            {% endif %}
+            <div class="form-group">
+              <label for="contact-name">Username</label>
+              <input type="name" name="username" class="form-control" id="contact-name" placeholder="Username" data-rule="minlen:4" data-msg="Please enter at least 4 chars">
+              <div class="validate"></div>
+            </div>
+            <div class="form-group">
+              <label for="contact-email">Password</label>
+              <input type="password" name="password" class="form-control" id="contact-password" placeholder="Password" data-rule="minlen:4" data-msg="Please enter at least 4 chars">
+              <div class="validate"></div>
+            </div>
+
+            <div class="loading"></div>
+            <div class="error-message"></div>
+            <div class="sent-message">You are logged !</div>
+
+            <div class="form-send">
+              <button type="submit" class="btn btn-large">Sign in</button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  {% include 'footer.html' %}

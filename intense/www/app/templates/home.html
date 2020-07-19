@@ -1,0 +1,24 @@
+{% include 'header.html' %}
+<section id="contact" name="contact">
+  <div id="footerwrap">
+    <div class="container">
+      <div class="col-lg-7">
+        {% if user %}
+        <h3>Welcome <emph>{{ user.username }}</emph></h3>
+        <p>
+            Please send me feedback ! :)<br>
+            One day, an old man said "there is no point using automated tools, better to craft his own".
+        </p>
+        {% else %}
+        <p>Hello !<br>
+          You can login with the username and password <b>guest</b>.<br>
+        </p>
+        {% endif %}
+
+        <br>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'footer.html' %}
