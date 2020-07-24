@@ -44,8 +44,7 @@ gsession = byte_gsession.decode()
 
 
 # known has is hex -> bytes -> b64
-b64_known_hash = '4uF40RAA+EnwwNCMtQnkEHP/KCjuoVoqqwoPT9mxGvE='
-
+b64_known_hash = 'dXca1uigN8o687ur5eaFJX+9H9L98Fsg9/EiClSJv18='
 # b64 -> bytes -> hex
 # hash
 known_hash = b64decode(b64_known_hash).hex()
