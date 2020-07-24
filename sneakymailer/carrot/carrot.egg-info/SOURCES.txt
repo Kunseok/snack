@@ -1,9 +1,0 @@
-README.md
-setup.cfg
-setup.py
-carrot/__init__.py
-carrot/trash.py
-carrot.egg-info/PKG-INFO
-carrot.egg-info/SOURCES.txt
-carrot.egg-info/dependency_links.txt
-carrot.egg-info/top_level.txt
