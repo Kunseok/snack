@@ -20,7 +20,7 @@ void handle_client(int sock) {
   uint8_t copy_size;
 
   while (1) {
-    // get command ID                                                                                                       
+    // get command ID
     if (read(sock, &cmd, 1) != 1) {                              
       exit(1);                                                                    
     }                                                                    

