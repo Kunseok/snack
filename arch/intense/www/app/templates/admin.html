@@ -1,0 +1,23 @@
+{% include 'header.html' %}
+<section id="contact" name="contact">
+  <div id="footerwrap">
+    <div class="container">
+      <div class="col-lg-7">
+        Welcome admin
+
+        <br>
+        {% if logcontent %}
+          {{ logcontent }}
+        {% endif %}
+
+        {% if dircontent %}
+          {% for dir in dircontent %}
+            {{ dir }}
+          {% endfor %}
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'footer.html' %}
