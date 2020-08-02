@@ -237,5 +237,64 @@ we have 4 github sources now... use git clone /path/to/.bundle
     sqlite3 => .open users.db => select * from users:
       $2a$10$IRgHi7pBhb9K0QBQBOzOju0PyOZhBnK4yaWjeZYdeP6oyDvCo9vc6
         $2a$10$IRgHi7pBhb9K0QBQBOzOju0PyOZhBnK4yaWjeZYdeP6oyDvCo9vc6:alexis1
+          O - felamos:alexis1
           works in http://dyplesher.htb/login
+
 Now we need plugin and .jar file...
+use intellij
+install minecraft plugin
+write files and read
+cwd is /home/MinatoTW/paper 
+write to MinatoTW's authorized_keys and ssh in
+as MinatoTW
+  X - /var/www/html/database/factories:
+    $factory->define(User::class, function (Faker $faker) {
+        return [
+            'name' => $faker->name,
+            'email' => $faker->unique()->safeEmail,
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+        ];
+    });
+  X - From an old file in bukkit/plugin/LoginSecurity:
+    database: LoginSecurity
+    username: root
+    password: password
+  X - bukkit:walrus
+  X - $2a$10$5SAkMNF9fPNamlpWr.ikte0rHInGcU54tvazErpuwGPFePuI1DCJa
+  X - $2y$12$c3SrJLybUEOYmpu1RVrJZuPyzE5sxGeM0ZChDhl8MlczVrxiA3pQK
+  X - $2a$10$zXNCus.UXtiuJE5e6lsQGefnAH3zipl.FRNySz5C4RjitiwUoalS
+  /var/gogs has a db use sqlite3 (i dont know how to crack these):
+    passwd|salt|email
+    d9beeb6ec64fdc4142f9cb4cee140d811d681bd31a4975ac82794cd5172d39f8d6313d51f191606d8cd1941eed4dfca73df9|ejjQEdsFOp|minatotw@dyplesher.htb
+    695d982f7ed8836922e688c7d5fcd009e74fa922c6fb60e601034375c6bc708cd8c1028c06d48fe05d5b81d7432baa0938b6|lfW6JJ3kwR|felamos@dyplesher.htb
+    44f12bc702ba5b15adb05bb13880e9e6b72ed5431d2e4366274e0657d50d685a7cf603c3db6f3d7edff0551d3dea81b0f627|gyaYOUfKoG|yuntao@dyplesher.htb
+
+    ejjqedsfop:d9beeb6ec64fdc4142f9cb4cee140d811d681bd31a4975ac82794cd5172d39f8d6313d51f191606d8cd1941eed4dfca73df9
+    lfw6jj3kwr:695d982f7ed8836922e688c7d5fcd009e74fa922c6fb60e601034375c6bc708cd8c1028c06d48fe05d5b81d7432baa0938b6
+    gyayoufkog:44f12bc702ba5b15adb05bb13880e9e6b72ed5431d2e4366274e0657d50d685a7cf603c3db6f3d7edff0551d3dea81b0f627
+
+ ... new angle, tshark -D:
+    1. veth05f3bac
+    2. docker0
+    3. ens33
+    4. lo (Loopback)
+    5. any
+    6. nflog
+    7. nfqueue
+    8. ciscodump (Cisco remote capture)
+    9. dpauxmon (DisplayPort AUX channel monitor capture)
+    10. randpkt (Random packet generator)
+    11. sdjournal (systemd Journal Export)
+    12. sshdump (SSH remote capture)
+    13. udpdump (UDP Listener remote capture)
+ 
+tshark -i 5 -w a.pcap
+:"MinatoTW","email":"MinatoTW@dyplesher.htb","address":"India","password":"bihys1amFov","subscribed"
+"name":"felamos","email":"felamos@dyplesher.htb","address":"India","password":"tieb0graQueg"
+su into felamos and win
+
+################################################################################
+ROOT
+################################################################################
