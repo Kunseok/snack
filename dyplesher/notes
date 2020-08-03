@@ -298,3 +298,51 @@ su into felamos and win
 ################################################################################
 ROOT
 ################################################################################
+/home/felamos/yuntao/send.sh
+
+  echo 'Hey yuntao, Please publish all cuberite plugins created by players on 
+  plugin_data "Exchange" and "Queue". Just send url to download plugins and 
+  our new code will review it and working plugins will be added to the server.'
+  >  /dev/pts/{}
+
+  yuntao:EashAnicOc3Op
+  :"yuntao@dyplesher.htb","address":"Italy","password":"wagthAw4ob","subscribed":true}Î
+
+revisit old ports:
+  22/tcp    open   ssh        OpenSSH 8.0p1 Ubuntu 6build1 (Ubuntu Linux; protocol 2.0)
+  80/tcp    open   http       Apache httpd 2.4.41 ((Ubuntu))
+  3000/tcp  open   ppp?
+  4369/tcp  open   epmd       Erlang Port Mapper Daemon
+  5672/tcp  open   amqp       RabbitMQ 3.7.8 (0-9)
+  11211/tcp open   memcache?
+  25562/tcp open   unknown
+  25565/tcp open   minecraft?
+
+'PLANET','radamar:mercury'
+rabbitmq   997  0.1  1.8 2156556 73996 ?       Sl   Aug02   1:54 /usr/lib/erlang/erts-10.4.4/bin/beam.smp -W w -A 64 -MBas ageffcbf -MHas ageffcbf -MBlmbcs 512 -MHlmbcs 512 -MMmcs 30 -P 1048576 -t 5000000 -stbt db -zdbbl 128000 -K true -- -root /usr/lib/erlang -progname erl -- -home /var/lib/rabbitmq -- -pa /usr/lib/rabbitmq/lib/rabbitmq_server-3.7.8/ebin -noshell -noinput -s rabbit boot -sname rabbit@dyplesher -boot start_sasl -kernel inet_default_connect_options [{nodelay,true}] -sasl errlog_type error -sasl sasl_error_logger false -rabbit lager_log_root "/var/log/rabbitmq" -rabbit lager_default_file "/var/log/rabbitmq/rabbit@dyplesher.log" -rabbit lager_upgrade_file "/var/log/rabbitmq/rabbit@dyplesher_upgrade.log" -rabbit enabled_plugins_file "/etc/rabbitmq/enabled_plugins" -rabbit plugins_dir "/usr/lib/rabbitmq/plugins:/usr/lib/rabbitmq/lib/rabbitmq_server-3.7.8/plugins" -rabbit plugins_expand_dir "/var/lib/rabbitmq/mnesia/rabbit@dyplesher-plugins-expand" -os_mon start_cpu_sup false -os_mon start_disksup false -os_mon start_memsup false -mnesia dir "/var/lib/rabbitmq/mnesia/rabbit@dyplesher" -kernel inet_dist_listen_min 25672 -kernel inet_dist_listen_max 25672
+
+/usr/lib/erlang/erts-10.4.4/bin/beam.smp -W w -A 64 -MBas ageffcbf -MHas ageffcbf -MBlmbcs 512 -MHlmbcs 512 -MMmcs 30 -P 1048576 -t 5000000 -stbt db -zdbbl 128000 -K true -- -root 
+/usr/lib/erlang -progname erl -- -home 
+/var/lib/rabbitmq -- -pa 
+/usr/lib/rabbitmq/lib/rabbitmq_server-3.7.8/ebin -noshell -noinput -s rabbit boot -sname rabbit@dyplesher -boot start_sasl -kernel inet_default_connect_options [{nodelay,true}] -sasl errlog_type error -sasl sasl_error_logger false -rabbit lager_log_root "
+/var/log/rabbitmq" -rabbit lager_default_file "
+/var/log/rabbitmq/rabbit@dyplesher.log" -rabbit lager_upgrade_file "
+/var/log/rabbitmq/rabbit@dyplesher_upgrade.log" -rabbit enabled_plugins_file "
+/etc/rabbitmq/enabled_plugins" -rabbit plugins_dir "
+/usr/lib/rabbitmq/plugins:
+/usr/lib/rabbitmq/lib/rabbitmq_server-3.7.8/plugins" -rabbit plugins_expand_dir "
+/var/lib/rabbitmq/mnesia/rabbit@dyplesher-plugins-expand" -os_mon start_cpu_sup false -os_mon start_disksup false -os_mon start_memsup false -mnesia dir "
+/var/lib/rabbitmq/mnesia/rabbit@dyplesher" -kernel inet_dist_listen_min 25672 -kernel inet_dist_listen_max 25672
+
+yuntao:wagthAw4ob
+MinatoTW:bihys1amFov
+felamos:tieb0graQueg
+yuntao:EashAnicOc3Op
+^ login works with the rabbit login
+
+had to get a hint, you can use python3 -m http.server 1337 on the victim
+
+create python script to tell target to grab from url (rabbit.py)
+  hint is misleading, exchange and queue must be blank, routing key must be 'plugin_data'
+
+start python server on victim and serve a lua file
