@@ -1,0 +1,8 @@
+user:[svc_backup] rid:[0x585]
+user:[lydericlefebvre] rid:[0x586]
+user:[Administrator] rid:[0x1f4]   
+user:[Guest] rid:[0x1f5]           
+user:[krbtgt] rid:[0x1f6]          
+user:[audit2020] rid:[0x44f]       
+user:[support] rid:[0x450]         
+

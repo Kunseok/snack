@@ -1,0 +1,4 @@
+SET CONTEXT PERSISTENT NOWRITERS#
+add volume c: alias snapshot#
+create#
+expose %snapshot% p:#

