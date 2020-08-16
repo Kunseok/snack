@@ -1,0 +1,15 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-16 08:47 EDT
+Nmap scan report for worker.htb (10.10.10.203)
+Host is up (0.052s latency).
+Not shown: 998 filtered ports
+PORT     STATE SERVICE  VERSION
+80/tcp   open  http     Microsoft IIS httpd 10.0
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: IIS Windows Server
+3690/tcp open  svnserve Subversion
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 13.24 seconds
