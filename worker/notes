@@ -144,4 +144,10 @@ O - upload shell to one of the websites (alpha,cartoon,spectral etc)
 ################################################################################
 ROOT
 ################################################################################
-
+O - robisl's creds work on devops....htb
+  O - i realized in user you can duo manual build with pipeline:
+      - minimal pipeline
+        - specify yaml to run cmd code:
+          - Specify a pool: Setup is the pool (check gear settings to see pool name, we have an admin pool)
+          - Specify a script: powershell.exe -c "cat C:/Users/Administrator/Desktop/root.txt"
+        
