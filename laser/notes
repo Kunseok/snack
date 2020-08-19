@@ -50,8 +50,25 @@ FOOTHOLD
 
 9000/tcp open  cslistener?
 9100/tcp open  jetdirect?
-
 9000/tcp open  cslistener?:
+
+http to 9100...:
+  returns 8 '?'
+
+nc -vv laser.htb 9000 > p9000
 
 X - 9100 printer exploits?:
   X - use exploit/linux/misc/hp_jetdirect_path_traversal
+
+- interact with 9100 with post script....
+  - telnet: returns '?'
+  - over http: also returns '?'
+  - use pret.py with pjl
+      @PJL INFO ID
+      LaserCorp LaserJet 4ML
+      LaserCorp LaserJet 4ML
+      LPARM:ENCRYPTION MODE=AES [CBC]  
+    - nvram dump gives you a key (nvram/10.10.10.201)
+      - k...e....y.....13vu94r6..643rv19u    
+        - http://hacking-printers.net/wiki/index.php/Memory_access
+    - AES and the key is 16 bytes... so assume https://stackoverflow.com/questions/41951715/aes-java-encryption-16-byte-key-decryption-with-objective-c
