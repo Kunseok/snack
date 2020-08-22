@@ -72,3 +72,13 @@ X - 9100 printer exploits?:
       - k...e....y.....13vu94r6..643rv19u    
         - http://hacking-printers.net/wiki/index.php/Memory_access
     - AES and the key is 16 bytes... so assume https://stackoverflow.com/questions/41951715/aes-java-encryption-16-byte-key-decryption-with-objective-c
+      - santize queued (strip b' and ' and ^M^M
+      - base64 -d queued > target
+      - first 8 is pack trash
+      - first 16 is iv
+O - port 9000 is rpc feed, read trash.pdf
+  - proto to interact
+  - python3 -m grpc_tools.protoc -I ./proto --python_out=. --grpc_python_out=. ./proto/s.proto;p3 client1.py
+  -client.py + s.proto to call method and ssrf for a port
+    - can call server to get feed.json
+    - 8983 found... what does it do?
