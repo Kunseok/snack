@@ -25,23 +25,16 @@ import json
 import pickle
 import urllib
 
-rind = 8
-
 def make_payload(payload):
     print("--------------------------------------------------------------------------------")
-    global rind
-    print(payload)
-    p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'", "id":"'+ str(rind) + '"}'
-    #p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'"}'
-    print(p)
-    rind += 1
+    #p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'", "id":"'+ str(rind) + '"}'
+    p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'"}'
+    #rind += 1
 
     # For storing 
     p = pickle.dumps(p)     # type(b) gives <class 'bytes'> 
     p = base64.b64encode(p)
     #p = base64.urlsafe_b64encode(p)
-    print()
-    print(base64.urlsafe_b64decode(p))
     return p 
 
 def run(t):

