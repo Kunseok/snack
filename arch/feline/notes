@@ -113,3 +113,4 @@ tcp        0      0 127.0.0.1:4506          0.0.0.0:*               LISTEN      
 
               - ./docker run -v /root:/mnt -it ANYTHING
 
+https://blog.secureideas.com/2018/05/escaping-the-whale-things-you-probably-shouldnt-do-with-docker-part-1.html
