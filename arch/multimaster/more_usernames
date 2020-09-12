@@ -1,0 +1,29 @@
+Administrator
+Guest
+krbtgt
+DefaultAccount
+Domain Admins
+Domain Users
+Domain Guests
+Domain Computers
+Domain Controllers
+Cert Publishers
+Schema Admins
+Enterprise Admins
+Group Policy Creator Owners
+Read-only Domain Controllers
+Cloneable Domain Controllers
+Protected Users
+Key Admins
+Enterprise Key Admins
+RAS and IAS Servers
+Allowed RODC Password Replication Group
+Denied RODC Password Replication Group
+MULTIMASTER$
+DnsAdmins
+DnsUpdateProxy
+svc-nas
+Privileged IT Accounts
+tushikikatomo
+andrew
+lana

