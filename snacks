@@ -1,0 +1,49 @@
+authbind
+chmod u+x set sticky for user
+chmod g+x set sticky for group
+strace ./program
+find / -perm -400 >2>/dev/null
+binaryninja
+
+http://xqi.cc/index.php?m=php://filter/convert.base64-encode/resource=index
+
+proc/self is who you are and what youre running
+
+/opt/Seclist
+
+zip to warfile... zip warfile.war warfile.jsp
+
+clear will work when on remote machine exec 'export TERM=$(echo $TERM)'
+clear will work when on remote machine exec 'export TERM=xterm'
+
+when on the box, send to background, on home machine do 'stty raw -echo' and autocomplete will work
+
+C:\Windows\SysNative\WindowsPowershell\v1.0\powershell.exe
+C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe
+C:\Windows\SysWow64\WindowsPowershell\v1.0\powershell.exe
+
+'cd -' means go to prev dir	
+
+hydra -l admin -P wordlist <IP> http-post-form "<urlpath>:param1=^TOKEN1^&param2=^TOKEN2^:<words to search for invalid auth>"
+
+hydra -l admin -P wordlist <IP> https-post-form "<urlpath>:param1=^TOKEN1^&param2=^TOKEN2^:<words to search for invalid auth>"
+
+searchsploit -x <PATH>
+
+# pane movement
+bind-key j command-prompt -p "join pane from:"  "join-pane -s '%%'"
+bind-key s command-prompt -p "send pane to:"  "join-pane -t '%%'"
+
+#!/bin/bash
+
+IFS=$'\n'
+
+old_process=$(ps -eo command)
+while true; do
+	new_process=$(ps -eo command)
+	diff <(echo "$old_process") < (echo "$new_process") |grep [\<\>]
+	sleep 1
+	old_process=$new_process
+done
+
+binwalk -Me file
